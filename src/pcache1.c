@@ -900,6 +900,7 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
   }
 
   if( pPage ){
+      //TODO
     unsigned int h = iKey % pCache->nHash;
     pCache->nPage++;
     pPage->iKey = iKey;
