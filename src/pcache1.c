@@ -134,6 +134,7 @@ struct PGroup {
   unsigned int mxPinned;         /* nMaxpage + 10 - nMinPage */
   unsigned int nCurrentPage;     /* Number of purgeable pages allocated */
   PgHdr1 lru;                    /* The beginning and end of the LRU list */
+  //TODO
 };
 
 /* Each page cache is an instance of the following object.  Every
