@@ -901,7 +901,7 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
   }
 
   if( pPage ){
-      //TODO
+      //TODO  similar with unpin work. Have to consider midpoint.
     unsigned int h = iKey % pCache->nHash;
     pCache->nPage++;
     pPage->iKey = iKey;
@@ -994,7 +994,7 @@ static PgHdr1 *pcache1FetchNoMutex(
   ** If the page was not in the hash table and createFlag is 0, abort.
   ** Otherwise (page not in hash and createFlag!=0) continue with
   ** subsequent steps to try to create the page. */
-  if( pPage ){
+  if( pPage ){  //TODO Here is Hit section. We should change here.
     if( !pPage->isPinned ){
       return pcache1PinPage(pPage);
     }else{
