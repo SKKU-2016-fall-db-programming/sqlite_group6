@@ -1,5 +1,5 @@
 #!/usr/make
-####
+##
 # Makefile for SQLITE
 #
 # This makefile is suppose to be configured automatically using the

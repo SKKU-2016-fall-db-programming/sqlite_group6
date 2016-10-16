@@ -870,6 +870,7 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
   PgHdr1 *pPage = 0;
 
   /* Step 3: Abort if createFlag is 1 but the cache is nearly full */
+  //TODO nPinned is not pCache->nPage - pCache->nRecyclable
   assert( pCache->nPage >= pCache->nRecyclable );
   nPinned = pCache->nPage - pCache->nRecyclable;
   assert( pGroup->mxPinned == pGroup->nMaxPage + 10 - pGroup->nMinPage );
@@ -912,6 +913,7 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
   }
 
   if( pPage ){
+      //TODO
     unsigned int h = iKey % pCache->nHash;
     pCache->nPage++;
     pPage->iKey = iKey;
