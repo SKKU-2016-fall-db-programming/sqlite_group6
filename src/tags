@@ -803,8 +803,8 @@ PAGER_WRITER_DBMOD	pager.c	355;"	d	file:
 PAGER_WRITER_FINISHED	pager.c	356;"	d	file:
 PAGER_WRITER_LOCKED	pager.c	353;"	d	file:
 PARENTVFS	test_vfs.c	156;"	d	file:
-PCACHE1_MIGHT_USE_GROUP_MUTEX	pcache1.c	224;"	d	file:
-PCACHE1_MIGHT_USE_GROUP_MUTEX	pcache1.c	228;"	d	file:
+PCACHE1_MIGHT_USE_GROUP_MUTEX	pcache1.c	232;"	d	file:
+PCACHE1_MIGHT_USE_GROUP_MUTEX	pcache1.c	236;"	d	file:
 PCACHE_DIRTYLIST_ADD	pcache.c	149;"	d	file:
 PCACHE_DIRTYLIST_FRONT	pcache.c	150;"	d	file:
 PCACHE_DIRTYLIST_REMOVE	pcache.c	148;"	d	file:
@@ -4037,6 +4037,7 @@ memsys5Roundup	mem5.c	/^static int memsys5Roundup(int n){$/;"	f	file:
 memsys5Shutdown	mem5.c	/^static void memsys5Shutdown(void *NotUsed){$/;"	f	file:
 memsys5Size	mem5.c	/^static int memsys5Size(void *p){$/;"	f	file:
 memsys5Unlink	mem5.c	/^static void memsys5Unlink(int i, int iLogsize){$/;"	f	file:
+midPoint	pcache1.c	/^  PgHdr1 midPoint;$/;"	m	struct:PGroup	file:
 minFrame	wal.c	/^  u32 minFrame;              \/* Ignore wal frames before this one *\/$/;"	m	struct:Wal	file:
 minLeaf	btreeInt.h	/^  u16 minLeaf;          \/* Minimum local payload in a LEAFDATA table *\/$/;"	m	struct:BtShared
 minLocal	btreeInt.h	/^  u16 minLocal;         \/* Minimum local payload in non-LEAFDATA tables *\/$/;"	m	struct:BtShared
@@ -4493,6 +4494,7 @@ next	mem3.c	/^      u32 next;       \/* Index in mem3.aPool[] of next free chunk
 next	mem5.c	/^  int next;       \/* Index of next free chunk *\/$/;"	m	struct:Mem5Link	file:
 next2	test_tclvar.c	/^static int next2(Tcl_Interp *interp, tclvar_cursor *pCur, Tcl_Obj *pObj){$/;"	f	file:
 nextAutovac	sqliteInt.h	/^  signed char nextAutovac;      \/* Autovac setting after VACUUM if >=0 *\/$/;"	m	struct:sqlite3
+nextMove	pcache1.c	/^  u8	 nextMove;$/;"	m	struct:PGroup	file:
 nextPagesize	sqliteInt.h	/^  int nextPagesize;             \/* Pagesize after VACUUM if >0 *\/$/;"	m	struct:sqlite3
 nextShmId	os_unix.c	/^  u8 nextShmId;              \/* Next available unixShm.id value *\/$/;"	m	struct:unixShmNode	file:
 nextShmId	os_win.c	/^  u8 nextShmId;              \/* Next available winShm.id value *\/$/;"	m	struct:winShmNode	file:
@@ -5347,15 +5349,15 @@ payloadSize	vdbeInt.h	/^  u32 payloadSize;      \/* Total number of bytes in the
 pc	vdbeInt.h	/^  int pc;                 \/* Program Counter in parent (calling) frame *\/$/;"	m	struct:VdbeFrame
 pc	vdbeInt.h	/^  int pc;                 \/* The program counter *\/$/;"	m	struct:Vdbe
 pcache	test_init.c	/^  sqlite3_pcache_methods2 pcache;$/;"	m	struct:Wrapped	file:
-pcache1	pcache1.c	216;"	d	file:
+pcache1	pcache1.c	224;"	d	file:
 pcache1Alloc	pcache1.c	/^static void *pcache1Alloc(int nByte){$/;"	f	file:
 pcache1AllocPage	pcache1.c	/^static PgHdr1 *pcache1AllocPage(PCache1 *pCache, int benignMalloc){$/;"	f	file:
 pcache1Cachesize	pcache1.c	/^static void pcache1Cachesize(sqlite3_pcache *p, int nMax){$/;"	f	file:
 pcache1Create	pcache1.c	/^static sqlite3_pcache *pcache1Create(int szPage, int szExtra, int bPurgeable){$/;"	f	file:
 pcache1Destroy	pcache1.c	/^static void pcache1Destroy(sqlite3_pcache *p){$/;"	f	file:
 pcache1EnforceMaxPage	pcache1.c	/^static void pcache1EnforceMaxPage(PCache1 *pCache){$/;"	f	file:
-pcache1EnterMutex	pcache1.c	222;"	d	file:
-pcache1EnterMutex	pcache1.c	226;"	d	file:
+pcache1EnterMutex	pcache1.c	230;"	d	file:
+pcache1EnterMutex	pcache1.c	234;"	d	file:
 pcache1Fetch	pcache1.c	/^static sqlite3_pcache_page *pcache1Fetch($/;"	f	file:
 pcache1FetchNoMutex	pcache1.c	/^static PgHdr1 *pcache1FetchNoMutex($/;"	f	file:
 pcache1FetchStage2	pcache1.c	/^static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2($/;"	f	file:
@@ -5364,8 +5366,8 @@ pcache1Free	pcache1.c	/^static void pcache1Free(void *p){$/;"	f	file:
 pcache1FreePage	pcache1.c	/^static void pcache1FreePage(PgHdr1 *p){$/;"	f	file:
 pcache1Init	pcache1.c	/^static int pcache1Init(void *NotUsed){$/;"	f	file:
 pcache1InitBulk	pcache1.c	/^static int pcache1InitBulk(PCache1 *pCache){$/;"	f	file:
-pcache1LeaveMutex	pcache1.c	223;"	d	file:
-pcache1LeaveMutex	pcache1.c	227;"	d	file:
+pcache1LeaveMutex	pcache1.c	231;"	d	file:
+pcache1LeaveMutex	pcache1.c	235;"	d	file:
 pcache1MemSize	pcache1.c	/^static int pcache1MemSize(void *p){$/;"	f	file:
 pcache1Pagecount	pcache1.c	/^static int pcache1Pagecount(sqlite3_pcache *p){$/;"	f	file:
 pcache1PinPage	pcache1.c	/^static PgHdr1 *pcache1PinPage(PgHdr1 *pPage){$/;"	f	file:
@@ -8216,6 +8218,7 @@ totalExcess	mem5.c	/^  u64 totalExcess;    \/* Total internal fragmentation *\/$
 totalFinalize	func.c	/^static void totalFinalize(sqlite3_context *context){$/;"	f	file:
 total_changes	func.c	/^static void total_changes($/;"	f	file:
 total_changes	sqlite3ext.h	/^  int  (*total_changes)(sqlite3*);$/;"	m	struct:sqlite3_api_routines
+touchCount	pcache1.c	/^  u32 touchCount;$/;"	m	struct:PgHdr1	file:
 tr_tm	sqliteInt.h	/^  u8 tr_tm;               \/* One of TRIGGER_BEFORE, TRIGGER_AFTER *\/$/;"	m	struct:Trigger
 trace	mutex_unix.c	/^  int trace;                 \/* True to trace changes *\/$/;"	m	struct:sqlite3_mutex	file:
 trace	mutex_w32.c	/^  volatile int trace;        \/* True to trace changes *\/$/;"	m	struct:sqlite3_mutex	file:

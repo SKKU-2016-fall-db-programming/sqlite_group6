@@ -234696,153 +234696,153 @@ PgHdr1
 	mÌu
 ;
 
-147 
+148 
 	sPCache1
  {
 
-153 
+154 
 PGroup
  *
 	mpGroup
 ;
 
-154 
+155 
 	mszPage
 ;
 
-155 
+156 
 	mszExŒa
 ;
 
-156 
+157 
 	mszAÎoc
 ;
 
-157 
+158 
 	mbPurg—bË
 ;
 
-158 
+159 
 	mnMš
 ;
 
-159 
+160 
 	mnMax
 ;
 
-160 
+161 
 	mn90pù
 ;
 
-161 
+162 
 	miMaxKey
 ;
 
-166 
+167 
 	mnRecyþabË
 ;
 
-167 
+168 
 	mnPage
 ;
 
-168 
+169 
 	mnHash
 ;
 
-169 
+170 
 PgHdr1
  **
 	m­Hash
 ;
 
-170 
+171 
 PgHdr1
  *
 	mpF»e
 ;
 
-171 *
+172 *
 	mpBulk
 ;
 
-178 
+179 
 	sPgF»e¦Ù
  {
 
-179 
+180 
 PgF»e¦Ù
  *
 	mpNext
 ;
 
-185 
+186 
 SQLITE_WSD
  
 	sPCacheGlob®
  {
 
-186 
+187 
 PGroup
  
 	mg½
 ;
 
-193 
+194 
 	misIn™
 ;
 
-194 
+195 
 	m£·¿‹Cache
 ;
 
-195 
+196 
 	mnIn™Page
 ;
 
-196 
+197 
 	mszSlÙ
 ;
 
-197 
+198 
 	mnSlÙ
 ;
 
-198 
+199 
 	mnRe£rve
 ;
 
-199 *
+200 *
 	mpS¹
 , *
 	mpEnd
 ;
 
-201 
+202 
 sql™e3_mu‹x
  *
 	mmu‹x
 ;
 
-202 
+203 
 PgF»e¦Ù
  *
 	mpF»e
 ;
 
-203 
+204 
 	mnF»eSlÙ
 ;
 
-208 
+209 
 	mbUnd”P»ssu»
 ;
 
-209 } 
+210 } 
 	gpÿche1_g
 ;
 
-216 
+217 
 	#pÿche1
  (
 	`GLOBAL
@@ -234854,7 +234854,7 @@ pÿche1_g
 
 	)
 
-221 #ià!
+222 #ià!
 defšed
 (
 SQLITE_ENABLE_MEMORY_MANAGEMENT
@@ -234862,20 +234862,8 @@ SQLITE_ENABLE_MEMORY_MANAGEMENT
 SQLITE_THREADSAFE
 ==0
 
-222 
-	#pÿche1EÁ”Mu‹x
-(
-X
-è
-	`as£¹
-((X)->
-mu‹x
-==0)
-
-	)
-
 223 
-	#pÿche1L—veMu‹x
+	#pÿche1EÁ”Mu‹x
 (
 X
 è
@@ -234887,12 +234875,24 @@ mu‹x
 	)
 
 224 
+	#pÿche1L—veMu‹x
+(
+X
+è
+	`as£¹
+((X)->
+mu‹x
+==0)
+
+	)
+
+225 
 	#PCACHE1_MIGHT_USE_GROUP_MUTEX
  0
 
 	)
 
-226 
+227 
 	#pÿche1EÁ”Mu‹x
 (
 X
@@ -234904,7 +234904,7 @@ mu‹x
 
 	)
 
-227 
+228 
 	#pÿche1L—veMu‹x
 (
 X
@@ -234916,13 +234916,13 @@ mu‹x
 
 	)
 
-228 
+229 
 	#PCACHE1_MIGHT_USE_GROUP_MUTEX
  1
 
 	)
 
-244 
+245 
 	$sql™e3PCacheBufãrS‘up
 (*
 pBuf
@@ -234932,19 +234932,19 @@ sz
 n
 ){
 
-245 ifÐ
+246 ifÐ
 pÿche1
 .
 isIn™
  ){
 
-246 
+247 
 PgF»e¦Ù
  *
 p
 ;
 
-247 ifÐ
+248 ifÐ
 pBuf
 ==0 ) 
 sz
@@ -234952,13 +234952,13 @@ sz
 n
  = 0;
 
-248 
+249 
 sz
  = 
 	`ROUNDDOWN8
 (sz);
 
-249 
+250 
 pÿche1
 .
 szSlÙ
@@ -234966,7 +234966,7 @@ szSlÙ
 sz
 ;
 
-250 
+251 
 pÿche1
 .
 nSlÙ
@@ -234976,7 +234976,7 @@ nF»eSlÙ
 n
 ;
 
-251 
+252 
 pÿche1
 .
 nRe£rve
@@ -234984,7 +234984,7 @@ nRe£rve
 n
 >90 ? 10 : (n/10 + 1);
 
-252 
+253 
 pÿche1
 .
 pS¹
@@ -234992,23 +234992,23 @@ pS¹
 pBuf
 ;
 
-253 
+254 
 pÿche1
 .
 pF»e
  = 0;
 
-254 
+255 
 pÿche1
 .
 bUnd”P»ssu»
  = 0;
 
-255  
+256  
 n
 -- ){
 
-256 
+257 
 p
  = (
 PgF»e¦Ù
@@ -235016,7 +235016,7 @@ PgF»e¦Ù
 pBuf
 ;
 
-257 
+258 
 p
 ->
 pNext
@@ -235026,7 +235026,7 @@ pÿche1
 pF»e
 ;
 
-258 
+259 
 pÿche1
 .
 pF»e
@@ -235034,13 +235034,13 @@ pF»e
 p
 ;
 
-259 
+260 
 pBuf
  = (*)&((*íBuf)[
 sz
 ];
 
-261 
+262 
 pÿche1
 .
 pEnd
@@ -235048,11 +235048,11 @@ pEnd
 pBuf
 ;
 
-263 
+264 
 	}
 }
 
-269 
+270 
 	$pÿche1In™Bulk
 (
 PCache1
@@ -235060,39 +235060,39 @@ PCache1
 pCache
 ){
 
-270 
+271 
 i64
  
 szBulk
 ;
 
-271 *
+272 *
 zBulk
 ;
 
-272 ifÐ
+273 ifÐ
 pÿche1
 .
 nIn™Page
 ==0 )  0;
 
-274 ifÐ
+275 ifÐ
 pCache
 ->
 nMax
 <3 )  0;
 
-275 
+276 
 	`sql™e3BegšB’ignM®loc
 ();
 
-276 ifÐ
+277 ifÐ
 pÿche1
 .
 nIn™Page
 >0 ){
 
-277 
+278 
 szBulk
  = 
 pCache
@@ -235106,7 +235106,7 @@ pÿche1
 nIn™Page
 ;
 
-279 
+280 
 szBulk
  = -1024 * (
 i64
@@ -235116,7 +235116,7 @@ pÿche1
 nIn™Page
 ;
 
-281 ifÐ
+282 ifÐ
 szBulk
  > 
 pCache
@@ -235128,7 +235128,7 @@ i64
 nMax
  ){
 
-282 
+283 
 szBulk
  = 
 pCache
@@ -235138,7 +235138,7 @@ szAÎoc
 nMax
 ;
 
-284 
+285 
 zBulk
  = 
 pCache
@@ -235150,15 +235150,15 @@ pBulk
 szBulk
  );
 
-285 
+286 
 	`sql™e3EndB’ignM®loc
 ();
 
-286 ifÐ
+287 ifÐ
 zBulk
  ){
 
-287 
+288 
 nBulk
  = 
 	`sql™e3M®locSize
@@ -235170,17 +235170,17 @@ pCache
 szAÎoc
 ;
 
-288 
+289 
 i
 ;
 
-289 
+290 
 i
 =0; i<
 nBulk
 ; i++){
 
-290 
+291 
 PgHdr1
  *
 pX
@@ -235192,7 +235192,7 @@ pCache
 szPage
 ];
 
-291 
+292 
 pX
 ->
 ·ge
@@ -235202,7 +235202,7 @@ pBuf
 zBulk
 ;
 
-292 
+293 
 pX
 ->
 ·ge
@@ -235210,19 +235210,19 @@ pX
 pExŒa
  = &pX[1];
 
-293 
+294 
 pX
 ->
 isBulkLoÿl
  = 1;
 
-294 
+295 
 pX
 ->
 isAnchÜ
  = 0;
 
-295 
+296 
 pX
 ->
 pNext
@@ -235232,7 +235232,7 @@ pCache
 pF»e
 ;
 
-296 
+297 
 pCache
 ->
 pF»e
@@ -235240,7 +235240,7 @@ pF»e
 pX
 ;
 
-297 
+298 
 zBulk
  +ð
 pCache
@@ -235248,27 +235248,27 @@ pCache
 szAÎoc
 ;
 
-300  
+301  
 pCache
 ->
 pF»e
 !=0;
 
-301 
+302 
 	}
 }
 
-312 *
+313 *
 	$pÿche1AÎoc
 (
 nBy‹
 ){
 
-313 *
+314 *
 p
  = 0;
 
-314 
+315 
 	`as£¹
 Ð
 	`sql™e3_mu‹x_nÙh–d
@@ -235280,7 +235280,7 @@ g½
 mu‹x
 ) );
 
-315 ifÐ
+316 ifÐ
 nBy‹
 <=
 pÿche1
@@ -235288,7 +235288,7 @@ pÿche1
 szSlÙ
  ){
 
-316 
+317 
 	`sql™e3_mu‹x_’‹r
 (
 pÿche1
@@ -235296,7 +235296,7 @@ pÿche1
 mu‹x
 );
 
-317 
+318 
 p
  = (
 PgHdr1
@@ -235306,11 +235306,11 @@ pÿche1
 pF»e
 ;
 
-318 ifÐ
+319 ifÐ
 p
  ){
 
-319 
+320 
 pÿche1
 .
 pF»e
@@ -235318,13 +235318,13 @@ pF»e
 pNext
 ;
 
-320 
+321 
 pÿche1
 .
 nF»eSlÙ
 --;
 
-321 
+322 
 pÿche1
 .
 bUnd”P»ssu»
@@ -235334,7 +235334,7 @@ nF»eSlÙ
 nRe£rve
 ;
 
-322 
+323 
 	`as£¹
 Ð
 pÿche1
@@ -235342,7 +235342,7 @@ pÿche1
 nF»eSlÙ
 >=0 );
 
-323 
+324 
 	`sql™e3StusHighw©”
 (
 SQLITE_STATUS_PAGECACHE_SIZE
@@ -235350,13 +235350,13 @@ SQLITE_STATUS_PAGECACHE_SIZE
 nBy‹
 );
 
-324 
+325 
 	`sql™e3StusUp
 (
 SQLITE_STATUS_PAGECACHE_USED
 , 1);
 
-326 
+327 
 	`sql™e3_mu‹x_Ëave
 (
 pÿche1
@@ -235364,11 +235364,11 @@ pÿche1
 mu‹x
 );
 
-328 ifÐ
+329 ifÐ
 p
 ==0 ){
 
-332 
+333 
 p
  = 
 	`sql™e3M®loc
@@ -235376,15 +235376,15 @@ p
 nBy‹
 );
 
-333 #iâdeà
+334 #iâdeà
 SQLITE_DISABLE_PAGECACHE_OVERFLOW_STATS
 
 
-334 ifÐ
+335 ifÐ
 p
  ){
 
-335 
+336 
 sz
  = 
 	`sql™e3M®locSize
@@ -235392,7 +235392,7 @@ sz
 p
 );
 
-336 
+337 
 	`sql™e3_mu‹x_’‹r
 (
 pÿche1
@@ -235400,7 +235400,7 @@ pÿche1
 mu‹x
 );
 
-337 
+338 
 	`sql™e3StusHighw©”
 (
 SQLITE_STATUS_PAGECACHE_SIZE
@@ -235408,7 +235408,7 @@ SQLITE_STATUS_PAGECACHE_SIZE
 nBy‹
 );
 
-338 
+339 
 	`sql™e3StusUp
 (
 SQLITE_STATUS_PAGECACHE_OVERFLOW
@@ -235416,7 +235416,7 @@ SQLITE_STATUS_PAGECACHE_OVERFLOW
 sz
 );
 
-339 
+340 
 	`sql™e3_mu‹x_Ëave
 (
 pÿche1
@@ -235424,7 +235424,7 @@ pÿche1
 mu‹x
 );
 
-342 
+343 
 	`sql™e3MemdebugS‘Ty³
 (
 p
@@ -235432,25 +235432,25 @@ p
 MEMTYPE_PCACHE
 );
 
-344  
+345  
 p
 ;
 
-345 
+346 
 	}
 }
 
-350 
+351 
 	$pÿche1F»e
 (*
 p
 ){
 
-351 ifÐ
+352 ifÐ
 p
 ==0 ) ;
 
-352 ifÐ
+353 ifÐ
 	`SQLITE_WITHIN
 (
 p
@@ -235462,13 +235462,13 @@ pS¹
 pEnd
 ) ){
 
-353 
+354 
 PgF»e¦Ù
  *
 pSlÙ
 ;
 
-354 
+355 
 	`sql™e3_mu‹x_’‹r
 (
 pÿche1
@@ -235476,13 +235476,13 @@ pÿche1
 mu‹x
 );
 
-355 
+356 
 	`sql™e3StusDown
 (
 SQLITE_STATUS_PAGECACHE_USED
 , 1);
 
-356 
+357 
 pSlÙ
  = (
 PgF»e¦Ù
@@ -235490,7 +235490,7 @@ PgF»e¦Ù
 p
 ;
 
-357 
+358 
 pSlÙ
 ->
 pNext
@@ -235500,7 +235500,7 @@ pÿche1
 pF»e
 ;
 
-358 
+359 
 pÿche1
 .
 pF»e
@@ -235508,13 +235508,13 @@ pF»e
 pSlÙ
 ;
 
-359 
+360 
 pÿche1
 .
 nF»eSlÙ
 ++;
 
-360 
+361 
 pÿche1
 .
 bUnd”P»ssu»
@@ -235524,7 +235524,7 @@ nF»eSlÙ
 nRe£rve
 ;
 
-361 
+362 
 	`as£¹
 Ð
 pÿche1
@@ -235534,7 +235534,7 @@ nF»eSlÙ
 nSlÙ
  );
 
-362 
+363 
 	`sql™e3_mu‹x_Ëave
 (
 pÿche1
@@ -235542,7 +235542,7 @@ pÿche1
 mu‹x
 );
 
-364 
+365 
 	`as£¹
 Ð
 	`sql™e3MemdebugHasTy³
@@ -235552,7 +235552,7 @@ p
 MEMTYPE_PCACHE
 ) );
 
-365 
+366 
 	`sql™e3MemdebugS‘Ty³
 (
 p
@@ -235560,15 +235560,15 @@ p
 MEMTYPE_HEAP
 );
 
-366 #iâdeà
+367 #iâdeà
 SQLITE_DISABLE_PAGECACHE_OVERFLOW_STATS
 
 
-368 
+369 
 nF»ed
  = 0;
 
-369 
+370 
 nF»ed
  = 
 	`sql™e3M®locSize
@@ -235576,7 +235576,7 @@ nF»ed
 p
 );
 
-370 
+371 
 	`sql™e3_mu‹x_’‹r
 (
 pÿche1
@@ -235584,7 +235584,7 @@ pÿche1
 mu‹x
 );
 
-371 
+372 
 	`sql™e3StusDown
 (
 SQLITE_STATUS_PAGECACHE_OVERFLOW
@@ -235592,7 +235592,7 @@ SQLITE_STATUS_PAGECACHE_OVERFLOW
 nF»ed
 );
 
-372 
+373 
 	`sql™e3_mu‹x_Ëave
 (
 pÿche1
@@ -235600,27 +235600,27 @@ pÿche1
 mu‹x
 );
 
-375 
+376 
 	`sql™e3_ä“
 (
 p
 );
 
-377 
+378 
 	}
 }
 
-379 #ifdeà
+380 #ifdeà
 SQLITE_ENABLE_MEMORY_MANAGEMENT
 
 
-383 
+384 
 	$pÿche1MemSize
 (*
 p
 ){
 
-384 ifÐ
+385 ifÐ
 p
 >=
 pÿche1
@@ -235630,17 +235630,17 @@ pS¹
 pEnd
  ){
 
-385  
+386  
 pÿche1
 .
 szSlÙ
 ;
 
-387 
+388 
 iSize
 ;
 
-388 
+389 
 	`as£¹
 Ð
 	`sql™e3MemdebugHasTy³
@@ -235650,7 +235650,7 @@ p
 MEMTYPE_PCACHE
 ) );
 
-389 
+390 
 	`sql™e3MemdebugS‘Ty³
 (
 p
@@ -235658,7 +235658,7 @@ p
 MEMTYPE_HEAP
 );
 
-390 
+391 
 iSize
  = 
 	`sql™e3M®locSize
@@ -235666,7 +235666,7 @@ iSize
 p
 );
 
-391 
+392 
 	`sql™e3MemdebugS‘Ty³
 (
 p
@@ -235674,15 +235674,15 @@ p
 MEMTYPE_PCACHE
 );
 
-392  
+393  
 iSize
 ;
 
-394 
+395 
 	}
 }
 
-400 
+401 
 PgHdr1
  *
 	$pÿche1AÎocPage
@@ -235694,17 +235694,17 @@ pCache
 b’ignM®loc
 ){
 
-401 
+402 
 PgHdr1
  *
 p
  = 0;
 
-402 *
+403 *
 pPg
 ;
 
-404 
+405 
 	`as£¹
 Ð
 	`sql™e3_mu‹x_h–d
@@ -235716,7 +235716,7 @@ pGroup
 mu‹x
 ) );
 
-405 ifÐ
+406 ifÐ
 pCache
 ->
 pF»e
@@ -235726,7 +235726,7 @@ nPage
 	`pÿche1In™Bulk
 (pCache)) ){
 
-406 
+407 
 p
  = 
 pCache
@@ -235734,7 +235734,7 @@ pCache
 pF»e
 ;
 
-407 
+408 
 pCache
 ->
 pF»e
@@ -235744,17 +235744,17 @@ p
 pNext
 ;
 
-408 
+409 
 p
 ->
 pNext
  = 0;
 
-410 #ifdeà
+411 #ifdeà
 SQLITE_ENABLE_MEMORY_MANAGEMENT
 
 
-414 
+415 
 	`as£¹
 Ð
 pÿche1
@@ -235762,7 +235762,7 @@ pÿche1
 £·¿‹Cache
 ==0 );
 
-415 
+416 
 	`as£¹
 Ð
 pCache
@@ -235774,7 +235774,7 @@ pÿche1
 g½
  );
 
-416 
+417 
 	`pÿche1L—veMu‹x
 (
 pCache
@@ -235782,17 +235782,17 @@ pCache
 pGroup
 );
 
-418 ifÐ
+419 ifÐ
 b’ignM®loc
  ){ 
 	`sql™e3BegšB’ignM®loc
 (); }
 
-419 #ifdeà
+420 #ifdeà
 SQLITE_PCACHE_SEPARATE_HEADER
 
 
-420 
+421 
 pPg
  = 
 	`pÿche1AÎoc
@@ -235802,7 +235802,7 @@ pCache
 szPage
 );
 
-421 
+422 
 p
  = 
 	`sql™e3M®loc
@@ -235814,29 +235814,29 @@ pCache
 szExŒa
 );
 
-422 ifÐ!
+423 ifÐ!
 pPg
  || !
 p
  ){
 
-423 
+424 
 	`pÿche1F»e
 (
 pPg
 );
 
-424 
+425 
 	`sql™e3_ä“
 (
 p
 );
 
-425 
+426 
 pPg
  = 0;
 
-428 
+429 
 pPg
  = 
 	`pÿche1AÎoc
@@ -235846,7 +235846,7 @@ pCache
 szAÎoc
 );
 
-429 
+430 
 p
  = (
 PgHdr1
@@ -235860,17 +235860,17 @@ pCache
 szPage
 ];
 
-431 ifÐ
+432 ifÐ
 b’ignM®loc
  ){ 
 	`sql™e3EndB’ignM®loc
 (); }
 
-432 #ifdeà
+433 #ifdeà
 SQLITE_ENABLE_MEMORY_MANAGEMENT
 
 
-433 
+434 
 	`pÿche1EÁ”Mu‹x
 (
 pCache
@@ -235878,11 +235878,11 @@ pCache
 pGroup
 );
 
-435 ifÐ
+436 ifÐ
 pPg
 ==0 )  0;
 
-436 
+437 
 p
 ->
 ·ge
@@ -235892,7 +235892,7 @@ pBuf
 pPg
 ;
 
-437 
+438 
 p
 ->
 ·ge
@@ -235900,25 +235900,25 @@ p
 pExŒa
  = &p[1];
 
-438 
+439 
 p
 ->
 isBulkLoÿl
  = 0;
 
-439 
+440 
 p
 ->
 isAnchÜ
  = 0;
 
-441 ifÐ
+442 ifÐ
 pCache
 ->
 bPurg—bË
  ){
 
-442 
+443 
 pCache
 ->
 pGroup
@@ -235926,15 +235926,15 @@ pGroup
 nCu¼’tPage
 ++;
 
-444  
+445  
 p
 ;
 
-445 
+446 
 	}
 }
 
-450 
+451 
 	$pÿche1F»ePage
 (
 PgHdr1
@@ -235942,25 +235942,25 @@ PgHdr1
 p
 ){
 
-451 
+452 
 PCache1
  *
 pCache
 ;
 
-452 
+453 
 	`as£¹
 Ð
 p
 !=0 );
 
-453 
+454 
 pCache
  = 
 p
 ->pCache;
 
-454 
+455 
 	`as£¹
 Ð
 	`sql™e3_mu‹x_h–d
@@ -235974,13 +235974,13 @@ pGroup
 mu‹x
 ) );
 
-455 ifÐ
+456 ifÐ
 p
 ->
 isBulkLoÿl
  ){
 
-456 
+457 
 p
 ->
 pNext
@@ -235990,7 +235990,7 @@ pCache
 pF»e
 ;
 
-457 
+458 
 pCache
 ->
 pF»e
@@ -235998,7 +235998,7 @@ pF»e
 p
 ;
 
-459 
+460 
 	`pÿche1F»e
 (
 p
@@ -236008,23 +236008,23 @@ p
 pBuf
 );
 
-460 #ifdeà
+461 #ifdeà
 SQLITE_PCACHE_SEPARATE_HEADER
 
 
-461 
+462 
 	`sql™e3_ä“
 (
 p
 );
 
-464 ifÐ
+465 ifÐ
 pCache
 ->
 bPurg—bË
  ){
 
-465 
+466 
 pCache
 ->
 pGroup
@@ -236032,43 +236032,43 @@ pGroup
 nCu¼’tPage
 --;
 
-467 
+468 
 	}
 }
 
-474 *
+475 *
 	$sql™e3PageM®loc
 (
 sz
 ){
 
-475  
+476  
 	`pÿche1AÎoc
 (
 sz
 );
 
-476 
+477 
 	}
 }
 
-481 
+482 
 	$sql™e3PageF»e
 (*
 p
 ){
 
-482 
+483 
 	`pÿche1F»e
 (
 p
 );
 
-483 
+484 
 	}
 }
 
-502 
+503 
 	$pÿche1Und”MemÜyP»ssu»
 (
 PCache1
@@ -236076,7 +236076,7 @@ PCache1
 pCache
 ){
 
-503 ifÐ
+504 ifÐ
 pÿche1
 .
 nSlÙ
@@ -236090,21 +236090,21 @@ szExŒa
 szSlÙ
  ){
 
-504  
+505  
 pÿche1
 .
 bUnd”P»ssu»
 ;
 
-506  
+507  
 	`sql™e3H—pN—¾yFuÎ
 ();
 
-508 
+509 
 	}
 }
 
-519 
+520 
 	$pÿche1ResizeHash
 (
 PCache1
@@ -236112,21 +236112,21 @@ PCache1
 p
 ){
 
-520 
+521 
 PgHdr1
  **
 ­New
 ;
 
-521 
+522 
 nNew
 ;
 
-522 
+523 
 i
 ;
 
-524 
+525 
 	`as£¹
 Ð
 	`sql™e3_mu‹x_h–d
@@ -236138,7 +236138,7 @@ pGroup
 mu‹x
 ) );
 
-526 
+527 
 nNew
  = 
 p
@@ -236146,15 +236146,15 @@ p
 nHash
 *2;
 
-527 ifÐ
+528 ifÐ
 nNew
 <256 ){
 
-528 
+529 
 nNew
  = 256;
 
-531 
+532 
 	`pÿche1L—veMu‹x
 (
 p
@@ -236162,7 +236162,7 @@ p
 pGroup
 );
 
-532 ifÐ
+533 ifÐ
 p
 ->
 nHash
@@ -236170,7 +236170,7 @@ nHash
 	`sql™e3BegšB’ignM®loc
 (); }
 
-533 
+534 
 ­New
  = (
 PgHdr1
@@ -236180,7 +236180,7 @@ PgHdr1
 nNew
 );
 
-534 ifÐ
+535 ifÐ
 p
 ->
 nHash
@@ -236188,7 +236188,7 @@ nHash
 	`sql™e3EndB’ignM®loc
 (); }
 
-535 
+536 
 	`pÿche1EÁ”Mu‹x
 (
 p
@@ -236196,11 +236196,11 @@ p
 pGroup
 );
 
-536 ifÐ
+537 ifÐ
 ­New
  ){
 
-537 
+538 
 i
 =0; i<
 p
@@ -236208,13 +236208,13 @@ p
 nHash
 ; i++){
 
-538 
+539 
 PgHdr1
  *
 pPage
 ;
 
-539 
+540 
 PgHdr1
  *
 pNext
@@ -236226,13 +236226,13 @@ p
 i
 ];
 
-540  (
+541  (
 pPage
  = 
 pNext
 )!=0 ){
 
-541 
+542 
 h
  = 
 pPage
@@ -236242,13 +236242,13 @@ iKey
 nNew
 ;
 
-542 
+543 
 pNext
  = 
 pPage
 ->pNext;
 
-543 
+544 
 pPage
 ->
 pNext
@@ -236258,7 +236258,7 @@ pNext
 h
 ];
 
-544 
+545 
 ­New
 [
 h
@@ -236266,7 +236266,7 @@ h
 pPage
 ;
 
-547 
+548 
 	`sql™e3_ä“
 (
 p
@@ -236274,7 +236274,7 @@ p
 ­Hash
 );
 
-548 
+549 
 p
 ->
 ­Hash
@@ -236282,7 +236282,7 @@ p
 ­New
 ;
 
-549 
+550 
 p
 ->
 nHash
@@ -236290,11 +236290,11 @@ nHash
 nNew
 ;
 
-551 
+552 
 	}
 }
 
-560 
+561 
 PgHdr1
  *
 	$pÿche1PšPage
@@ -236304,19 +236304,19 @@ PgHdr1
 pPage
 ){
 
-561 
+562 
 PCache1
  *
 pCache
 ;
 
-563 
+564 
 	`as£¹
 Ð
 pPage
 !=0 );
 
-564 
+565 
 	`as£¹
 Ð
 pPage
@@ -236324,13 +236324,13 @@ pPage
 isPšÃd
 ==0 );
 
-565 
+566 
 pCache
  = 
 pPage
 ->pCache;
 
-566 
+567 
 	`as£¹
 Ð
 pPage
@@ -236338,7 +236338,7 @@ pPage
 pLruNext
  );
 
-567 
+568 
 	`as£¹
 Ð
 pPage
@@ -236346,7 +236346,7 @@ pPage
 pLruP»v
  );
 
-568 
+569 
 	`as£¹
 Ð
 	`sql™e3_mu‹x_h–d
@@ -236358,7 +236358,7 @@ pGroup
 mu‹x
 ) );
 
-569 
+570 
 pPage
 ->
 pLruP»v
@@ -236366,7 +236366,7 @@ pLruP»v
 pLruNext
  =…Page->pLruNext;
 
-570 
+571 
 pPage
 ->
 pLruNext
@@ -236374,25 +236374,25 @@ pLruNext
 pLruP»v
  =…Page->pLruPrev;
 
-571 
+572 
 pPage
 ->
 pLruNext
  = 0;
 
-572 
+573 
 pPage
 ->
 pLruP»v
  = 0;
 
-573 
+574 
 pPage
 ->
 isPšÃd
  = 1;
 
-574 
+575 
 	`as£¹
 Ð
 pPage
@@ -236400,7 +236400,7 @@ pPage
 isAnchÜ
 ==0 );
 
-575 
+576 
 	`as£¹
 Ð
 pCache
@@ -236412,21 +236412,21 @@ pGroup
 isAnchÜ
 ==1 );
 
-576 
+577 
 pCache
 ->
 nRecyþabË
 --;
 
-577  
+578  
 pPage
 ;
 
-578 
+579 
 	}
 }
 
-588 
+589 
 	$pÿche1RemoveFromHash
 (
 PgHdr1
@@ -236436,11 +236436,11 @@ pPage
 ä“FÏg
 ){
 
-589 
+590 
 h
 ;
 
-590 
+591 
 PCache1
  *
 pCache
@@ -236448,13 +236448,13 @@ pCache
 pPage
 ->pCache;
 
-591 
+592 
 PgHdr1
  **
 µ
 ;
 
-593 
+594 
 	`as£¹
 Ð
 	`sql™e3_mu‹x_h–d
@@ -236466,7 +236466,7 @@ pGroup
 mu‹x
 ) );
 
-594 
+595 
 h
  = 
 pPage
@@ -236478,7 +236478,7 @@ pCache
 nHash
 ;
 
-595 
+596 
 µ
 =&
 pCache
@@ -236492,19 +236492,19 @@ pPage
 pNext
 );
 
-596 *
+597 *
 µ
  = (*µ)->
 pNext
 ;
 
-598 
+599 
 pCache
 ->
 nPage
 --;
 
-599 ifÐ
+600 ifÐ
 ä“FÏg
  ) 
 	`pÿche1F»ePage
@@ -236512,11 +236512,11 @@ nPage
 pPage
 );
 
-600 
+601 
 	}
 }
 
-606 
+607 
 	$pÿche1EnfÜûMaxPage
 (
 PCache1
@@ -236524,7 +236524,7 @@ PCache1
 pCache
 ){
 
-607 
+608 
 PGroup
  *
 pGroup
@@ -236532,13 +236532,13 @@ pGroup
 pCache
 ->pGroup;
 
-608 
+609 
 PgHdr1
  *
 p
 ;
 
-609 
+610 
 	`as£¹
 Ð
 	`sql™e3_mu‹x_h–d
@@ -236548,7 +236548,7 @@ pGroup
 mu‹x
 ) );
 
-610  
+611  
 pGroup
 ->
 nCu¼’tPage
@@ -236556,7 +236556,7 @@ nCu¼’tPage
 nMaxPage
 
 
-611 && (
+612 && (
 p
 =
 pGroup
@@ -236568,7 +236568,7 @@ pLruP»v
 isAnchÜ
 ==0
 
-613 
+614 
 	`as£¹
 Ð
 p
@@ -236578,7 +236578,7 @@ pCache
 pGroup
 ==pGroup );
 
-614 
+615 
 	`as£¹
 Ð
 p
@@ -236586,19 +236586,19 @@ p
 isPšÃd
 ==0 );
 
-615 
+616 
 	`pÿche1PšPage
 (
 p
 );
 
-616 
+617 
 	`pÿche1RemoveFromHash
 (
 p
 , 1);
 
-618 ifÐ
+619 ifÐ
 pCache
 ->
 nPage
@@ -236606,7 +236606,7 @@ nPage
 pBulk
  ){
 
-619 
+620 
 	`sql™e3_ä“
 (
 pCache
@@ -236614,7 +236614,7 @@ pCache
 pBulk
 );
 
-620 
+621 
 pCache
 ->
 pBulk
@@ -236622,37 +236622,37 @@ pBulk
 pF»e
  = 0;
 
-622 
+623 
 	}
 }
 
-631 
+632 
 	$pÿche1Trunÿ‹Un§ã
 (
 
-632 
+633 
 PCache1
  *
 pCache
 ,
 
-633 
+634 
 iLim™
 
 
-635 
+636 
 	`TESTONLY
 Ð
 nPage
  = 0; )
 
-636 
+637 
 h
 , 
 iStÝ
 ;
 
-637 
+638 
 	`as£¹
 Ð
 	`sql™e3_mu‹x_h–d
@@ -236664,7 +236664,7 @@ pGroup
 mu‹x
 ) );
 
-638 
+639 
 	`as£¹
 Ð
 pCache
@@ -236674,7 +236674,7 @@ iMaxKey
 iLim™
  );
 
-639 
+640 
 	`as£¹
 Ð
 pCache
@@ -236682,7 +236682,7 @@ pCache
 nHash
  > 0 );
 
-640 ifÐ
+641 ifÐ
 pCache
 ->
 iMaxKey
@@ -236692,7 +236692,7 @@ iLim™
 nHash
  ){
 
-645 
+646 
 h
  = 
 iLim™
@@ -236702,7 +236702,7 @@ pCache
 nHash
 ;
 
-646 
+647 
 iStÝ
  = 
 pCache
@@ -236712,13 +236712,13 @@ iMaxKey
 nHash
 ;
 
-647 
+648 
 	`TESTONLY
 Ð
 nPage
  = -10; )
 
-651 
+652 
 h
  = 
 pCache
@@ -236726,25 +236726,25 @@ pCache
 nHash
 /2;
 
-652 
+653 
 iStÝ
  = 
 h
  - 1;
 
-655 
+656 
 PgHdr1
  **
 µ
 ;
 
-656 
+657 
 PgHdr1
  *
 pPage
 ;
 
-657 
+658 
 	`as£¹
 Ð
 h
@@ -236754,7 +236754,7 @@ pCache
 nHash
  );
 
-658 
+659 
 µ
  = &
 pCache
@@ -236764,13 +236764,13 @@ pCache
 h
 ];
 
-659  (
+660  (
 pPage
  = *
 µ
 )!=0 ){
 
-660 ifÐ
+661 ifÐ
 pPage
 ->
 iKey
@@ -236778,13 +236778,13 @@ iKey
 iLim™
  ){
 
-661 
+662 
 pCache
 ->
 nPage
 --;
 
-662 *
+663 *
 µ
  = 
 pPage
@@ -236792,7 +236792,7 @@ pPage
 pNext
 ;
 
-663 ifÐ!
+664 ifÐ!
 pPage
 ->
 isPšÃd
@@ -236800,13 +236800,13 @@ isPšÃd
 	`pÿche1PšPage
 (pPage);
 
-664 
+665 
 	`pÿche1F»ePage
 (
 pPage
 );
 
-666 
+667 
 µ
  = &
 pPage
@@ -236814,19 +236814,19 @@ pPage
 pNext
 ;
 
-667 
+668 
 	`TESTONLY
 ÐifÐ
 nPage
 >=0 )‚Page++; )
 
-670 ifÐ
+671 ifÐ
 h
 ==
 iStÝ
  ) ;
 
-671 
+672 
 h
  = (h+1è% 
 pCache
@@ -236834,7 +236834,7 @@ pCache
 nHash
 ;
 
-673 
+674 
 	`as£¹
 Ð
 nPage
@@ -236842,23 +236842,23 @@ nPage
 pCache
 ->nPage==()nPage );
 
-674 
+675 
 	}
 }
 
-682 
+683 
 	$pÿche1In™
 (*
 NÙU£d
 ){
 
-683 
+684 
 	`UNUSED_PARAMETER
 (
 NÙU£d
 );
 
-684 
+685 
 	`as£¹
 Ð
 pÿche1
@@ -236866,29 +236866,29 @@ pÿche1
 isIn™
 ==0 );
 
-685 
+686 
 	`mem£t
 (&
 pÿche1
 , 0, (pcache1));
 
-702 #ià
+703 #ià
 	`defšed
 (
 SQLITE_ENABLE_MEMORY_MANAGEMENT
 )
 
-703 
+704 
 pÿche1
 .
 £·¿‹Cache
  = 0;
 
-704 #–ià
+705 #–ià
 SQLITE_THREADSAFE
 
 
-705 
+706 
 pÿche1
 .
 £·¿‹Cache
@@ -236898,13 +236898,13 @@ sql™e3Glob®CÚfig
 pPage
 ==0
 
-706 || 
+707 || 
 sql™e3Glob®CÚfig
 .
 bCÜeMu‹x
 >0;
 
-708 
+709 
 pÿche1
 .
 £·¿‹Cache
@@ -236914,17 +236914,17 @@ sql™e3Glob®CÚfig
 pPage
 ==0;
 
-711 #ià
+712 #ià
 SQLITE_THREADSAFE
 
 
-712 ifÐ
+713 ifÐ
 sql™e3Glob®CÚfig
 .
 bCÜeMu‹x
  ){
 
-713 
+714 
 pÿche1
 .
 g½
@@ -236936,7 +236936,7 @@ mu‹x
 SQLITE_MUTEX_STATIC_LRU
 );
 
-714 
+715 
 pÿche1
 .
 mu‹x
@@ -236946,25 +236946,25 @@ mu‹x
 SQLITE_MUTEX_STATIC_PMEM
 );
 
-717 ifÐ
+718 ifÐ
 pÿche1
 .
 £·¿‹Cache
 
 
-718 && 
+719 && 
 sql™e3Glob®CÚfig
 .
 nPage
 !=0
 
-719 && 
+720 && 
 sql™e3Glob®CÚfig
 .
 pPage
 ==0
 
-721 
+722 
 pÿche1
 .
 nIn™Page
@@ -236974,13 +236974,13 @@ sql™e3Glob®CÚfig
 nPage
 ;
 
-723 
+724 
 pÿche1
 .
 nIn™Page
  = 0;
 
-725 
+726 
 pÿche1
 .
 g½
@@ -236988,33 +236988,33 @@ g½
 mxPšÃd
  = 10;
 
-726 
+727 
 pÿche1
 .
 isIn™
  = 1;
 
-727  
+728  
 SQLITE_OK
 ;
 
-728 
+729 
 	}
 }
 
-735 
+736 
 	$pÿche1Shutdown
 (*
 NÙU£d
 ){
 
-736 
+737 
 	`UNUSED_PARAMETER
 (
 NÙU£d
 );
 
-737 
+738 
 	`as£¹
 Ð
 pÿche1
@@ -237022,17 +237022,17 @@ pÿche1
 isIn™
 !=0 );
 
-738 
+739 
 	`mem£t
 (&
 pÿche1
 , 0, (pcache1));
 
-739 
+740 
 	}
 }
 
-742 
+743 
 pÿche1De¡roy
 (
 sql™e3_pÿche
@@ -237040,7 +237040,7 @@ sql™e3_pÿche
 p
 );
 
-749 
+750 
 sql™e3_pÿche
  *
 	$pÿche1C»©e
@@ -237052,35 +237052,35 @@ szExŒa
 bPurg—bË
 ){
 
-750 
+751 
 PCache1
  *
 pCache
 ;
 
-751 
+752 
 PGroup
  *
 pGroup
 ;
 
-752 
+753 
 sz
 ;
 
-754 
+755 
 	`as£¹
 Ð(
 szPage
  & (szPage-1))==0 && szPage>=512 && szPage<=65536 );
 
-755 
+756 
 	`as£¹
 Ð
 szExŒa
  < 300 );
 
-757 
+758 
 sz
  = (
 PCache1
@@ -237092,7 +237092,7 @@ pÿche1
 £·¿‹Cache
 ;
 
-758 
+759 
 pCache
  = (
 PCache1
@@ -237102,17 +237102,17 @@ PCache1
 sz
 );
 
-759 ifÐ
+760 ifÐ
 pCache
  ){
 
-760 ifÐ
+761 ifÐ
 pÿche1
 .
 £·¿‹Cache
  ){
 
-761 
+762 
 pGroup
  = (
 PGroup
@@ -237120,13 +237120,13 @@ PGroup
 pCache
 [1];
 
-762 
+763 
 pGroup
 ->
 mxPšÃd
  = 10;
 
-764 
+765 
 pGroup
  = &
 pÿche1
@@ -237134,7 +237134,7 @@ pÿche1
 g½
 ;
 
-766 ifÐ
+767 ifÐ
 pGroup
 ->
 Ìu
@@ -237142,7 +237142,7 @@ pGroup
 isAnchÜ
 ==0 ){
 
-767 
+768 
 pGroup
 ->
 Ìu
@@ -237150,7 +237150,7 @@ pGroup
 isAnchÜ
  = 1;
 
-768 
+769 
 pGroup
 ->
 Ìu
@@ -237160,25 +237160,25 @@ pLruP»v
 pLruNext
  = &pGroup->lru;
 
-770 
+771 
 pCache
 ->
 pGroup
  =…Group;
 
-771 
+772 
 pCache
 ->
 szPage
  = szPage;
 
-772 
+773 
 pCache
 ->
 szExŒa
  = szExtra;
 
-773 
+774 
 pCache
 ->
 szAÎoc
@@ -237192,35 +237192,35 @@ szExŒa
 PgHdr1
 ));
 
-774 
+775 
 pCache
 ->
 bPurg—bË
  = (bPurgeable ? 1 : 0);
 
-775 
+776 
 	`pÿche1EÁ”Mu‹x
 (
 pGroup
 );
 
-776 
+777 
 	`pÿche1ResizeHash
 (
 pCache
 );
 
-777 ifÐ
+778 ifÐ
 bPurg—bË
  ){
 
-778 
+779 
 pCache
 ->
 nMš
  = 10;
 
-779 
+780 
 pGroup
 ->
 nMšPage
@@ -237230,7 +237230,7 @@ pCache
 nMš
 ;
 
-780 
+781 
 pGroup
 ->
 mxPšÃd
@@ -237240,19 +237240,19 @@ nMaxPage
 nMšPage
 ;
 
-782 
+783 
 	`pÿche1L—veMu‹x
 (
 pGroup
 );
 
-783 ifÐ
+784 ifÐ
 pCache
 ->
 nHash
 ==0 ){
 
-784 
+785 
 	`pÿche1De¡roy
 ((
 sql™e3_pÿche
@@ -237260,21 +237260,21 @@ sql™e3_pÿche
 pCache
 );
 
-785 
+786 
 pCache
  = 0;
 
-788  (
+789  (
 sql™e3_pÿche
  *)
 pCache
 ;
 
-789 
+790 
 	}
 }
 
-796 
+797 
 	$pÿche1Cachesize
 (
 sql™e3_pÿche
@@ -237284,7 +237284,7 @@ p
 nMax
 ){
 
-797 
+798 
 PCache1
  *
 pCache
@@ -237292,13 +237292,13 @@ pCache
 p
 ;
 
-798 ifÐ
+799 ifÐ
 pCache
 ->
 bPurg—bË
  ){
 
-799 
+800 
 PGroup
  *
 pGroup
@@ -237306,13 +237306,13 @@ pGroup
 pCache
 ->pGroup;
 
-800 
+801 
 	`pÿche1EÁ”Mu‹x
 (
 pGroup
 );
 
-801 
+802 
 pGroup
 ->
 nMaxPage
@@ -237322,7 +237322,7 @@ nMax
 pCache
 ->nMax);
 
-802 
+803 
 pGroup
 ->
 mxPšÃd
@@ -237332,13 +237332,13 @@ nMaxPage
 nMšPage
 ;
 
-803 
+804 
 pCache
 ->
 nMax
  =‚Max;
 
-804 
+805 
 pCache
 ->
 n90pù
@@ -237346,23 +237346,23 @@ n90pù
 nMax
 *9/10;
 
-805 
+806 
 	`pÿche1EnfÜûMaxPage
 (
 pCache
 );
 
-806 
+807 
 	`pÿche1L—veMu‹x
 (
 pGroup
 );
 
-808 
+809 
 	}
 }
 
-815 
+816 
 	$pÿche1Shršk
 (
 sql™e3_pÿche
@@ -237370,7 +237370,7 @@ sql™e3_pÿche
 p
 ){
 
-816 
+817 
 PCache1
  *
 pCache
@@ -237378,13 +237378,13 @@ pCache
 p
 ;
 
-817 ifÐ
+818 ifÐ
 pCache
 ->
 bPurg—bË
  ){
 
-818 
+819 
 PGroup
  *
 pGroup
@@ -237392,17 +237392,17 @@ pGroup
 pCache
 ->pGroup;
 
-819 
+820 
 §vedMaxPage
 ;
 
-820 
+821 
 	`pÿche1EÁ”Mu‹x
 (
 pGroup
 );
 
-821 
+822 
 §vedMaxPage
  = 
 pGroup
@@ -237410,19 +237410,19 @@ pGroup
 nMaxPage
 ;
 
-822 
+823 
 pGroup
 ->
 nMaxPage
  = 0;
 
-823 
+824 
 	`pÿche1EnfÜûMaxPage
 (
 pCache
 );
 
-824 
+825 
 pGroup
 ->
 nMaxPage
@@ -237430,17 +237430,17 @@ nMaxPage
 §vedMaxPage
 ;
 
-825 
+826 
 	`pÿche1L—veMu‹x
 (
 pGroup
 );
 
-827 
+828 
 	}
 }
 
-832 
+833 
 	$pÿche1PagecouÁ
 (
 sql™e3_pÿche
@@ -237448,11 +237448,11 @@ sql™e3_pÿche
 p
 ){
 
-833 
+834 
 n
 ;
 
-834 
+835 
 PCache1
  *
 pCache
@@ -237460,7 +237460,7 @@ pCache
 p
 ;
 
-835 
+836 
 	`pÿche1EÁ”Mu‹x
 (
 pCache
@@ -237468,7 +237468,7 @@ pCache
 pGroup
 );
 
-836 
+837 
 n
  = 
 pCache
@@ -237476,7 +237476,7 @@ pCache
 nPage
 ;
 
-837 
+838 
 	`pÿche1L—veMu‹x
 (
 pCache
@@ -237484,15 +237484,15 @@ pCache
 pGroup
 );
 
-838  
+839  
 n
 ;
 
-839 
+840 
 	}
 }
 
-850 
+851 
 SQLITE_NOINLINE
  
 PgHdr1
@@ -237500,25 +237500,25 @@ PgHdr1
 	$pÿche1F‘chSge2
 (
 
-851 
+852 
 PCache1
  *
 pCache
 ,
 
-852 
+853 
 iKey
 ,
 
-853 
+854 
 ü—‹FÏg
 
 
-855 
+856 
 nPšÃd
 ;
 
-856 
+857 
 PGroup
  *
 pGroup
@@ -237526,13 +237526,13 @@ pGroup
 pCache
 ->pGroup;
 
-857 
+858 
 PgHdr1
  *
 pPage
  = 0;
 
-860 
+861 
 	`as£¹
 Ð
 pCache
@@ -237542,7 +237542,7 @@ nPage
 nRecyþabË
  );
 
-861 
+862 
 nPšÃd
  = 
 pCache
@@ -237552,7 +237552,7 @@ nPage
 nRecyþabË
 ;
 
-862 
+863 
 	`as£¹
 Ð
 pGroup
@@ -237564,7 +237564,7 @@ nMaxPage
 nMšPage
  );
 
-863 
+864 
 	`as£¹
 Ð
 pCache
@@ -237574,11 +237574,11 @@ n90pù
 nMax
 *9/10 );
 
-864 ifÐ
+865 ifÐ
 ü—‹FÏg
 ==1 && (
 
-865 
+866 
 nPšÃd
 >=
 pGroup
@@ -237586,7 +237586,7 @@ pGroup
 mxPšÃd
 
 
-866 || 
+867 || 
 nPšÃd
 >=
 pCache
@@ -237594,7 +237594,7 @@ pCache
 n90pù
 
 
-867 || (
+868 || (
 	`pÿche1Und”MemÜyP»ssu»
 (
 pCache
@@ -237604,7 +237604,7 @@ nRecyþabË
 nPšÃd
 )
 
-872 ifÐ
+873 ifÐ
 pCache
 ->
 nPage
@@ -237614,7 +237614,7 @@ nHash
 	`pÿche1ResizeHash
 (pCache);
 
-873 
+874 
 	`as£¹
 Ð
 pCache
@@ -237624,13 +237624,13 @@ nHash
 ­Hash
  );
 
-876 ifÐ
+877 ifÐ
 pCache
 ->
 bPurg—bË
 
 
-877 && !
+878 && !
 pGroup
 ->
 Ìu
@@ -237640,7 +237640,7 @@ pLruP»v
 isAnchÜ
 
 
-878 && ((
+879 && ((
 pCache
 ->
 nPage
@@ -237650,13 +237650,13 @@ nMax
 	`pÿche1Und”MemÜyP»ssu»
 (pCache))
 
-880 
+881 
 PCache1
  *
 pOth”
 ;
 
-881 
+882 
 pPage
  = 
 pGroup
@@ -237666,7 +237666,7 @@ pGroup
 pLruP»v
 ;
 
-882 
+883 
 	`as£¹
 Ð
 pPage
@@ -237674,19 +237674,19 @@ pPage
 isPšÃd
 ==0 );
 
-883 
+884 
 	`pÿche1RemoveFromHash
 (
 pPage
 , 0);
 
-884 
+885 
 	`pÿche1PšPage
 (
 pPage
 );
 
-885 
+886 
 pOth”
  = 
 pPage
@@ -237694,7 +237694,7 @@ pPage
 pCache
 ;
 
-886 ifÐ
+887 ifÐ
 pOth”
 ->
 szAÎoc
@@ -237702,17 +237702,17 @@ szAÎoc
 pCache
 ->szAlloc ){
 
-887 
+888 
 	`pÿche1F»ePage
 (
 pPage
 );
 
-888 
+889 
 pPage
  = 0;
 
-890 
+891 
 pGroup
 ->
 nCu¼’tPage
@@ -237724,11 +237724,11 @@ bPurg—bË
 pCache
 ->bPurgeable);
 
-897 ifÐ!
+898 ifÐ!
 pPage
  ){
 
-898 
+899 
 pPage
  = 
 	`pÿche1AÎocPage
@@ -237738,11 +237738,11 @@ pCache
 ü—‹FÏg
 ==1);
 
-901 ifÐ
+902 ifÐ
 pPage
  ){
 
-902 
+903 
 h
  = 
 iKey
@@ -237752,19 +237752,19 @@ pCache
 nHash
 ;
 
-903 
+904 
 pCache
 ->
 nPage
 ++;
 
-904 
+905 
 pPage
 ->
 iKey
  = iKey;
 
-905 
+906 
 pPage
 ->
 pNext
@@ -237776,31 +237776,31 @@ pCache
 h
 ];
 
-906 
+907 
 pPage
 ->
 pCache
  =…Cache;
 
-907 
+908 
 pPage
 ->
 pLruP»v
  = 0;
 
-908 
+909 
 pPage
 ->
 pLruNext
  = 0;
 
-909 
+910 
 pPage
 ->
 isPšÃd
  = 1;
 
-910 *(**)
+911 *(**)
 pPage
 ->
 ·ge
@@ -237808,7 +237808,7 @@ pPage
 pExŒa
  = 0;
 
-911 
+912 
 pCache
 ->
 ­Hash
@@ -237818,7 +237818,7 @@ h
 pPage
 ;
 
-912 ifÐ
+913 ifÐ
 iKey
 >
 pCache
@@ -237826,7 +237826,7 @@ pCache
 iMaxKey
  ){
 
-913 
+914 
 pCache
 ->
 iMaxKey
@@ -237834,35 +237834,35 @@ iMaxKey
 iKey
 ;
 
-916  
+917  
 pPage
 ;
 
-917 
+918 
 	}
 }
 
-978 
+979 
 PgHdr1
  *
 	$pÿche1F‘chNoMu‹x
 (
 
-979 
+980 
 sql™e3_pÿche
  *
 p
 ,
 
-980 
+981 
 iKey
 ,
 
-981 
+982 
 ü—‹FÏg
 
 
-983 
+984 
 PCache1
  *
 pCache
@@ -237870,13 +237870,13 @@ pCache
 p
 ;
 
-984 
+985 
 PgHdr1
  *
 pPage
  = 0;
 
-987 
+988 
 pPage
  = 
 pCache
@@ -237888,7 +237888,7 @@ iKey
 nHash
 ];
 
-988  
+989  
 pPage
  &&…Page->
 iKey
@@ -237896,31 +237896,31 @@ iKey
 pNext
 ; }
 
-994 ifÐ
+995 ifÐ
 pPage
  ){
 
-995 ifÐ!
+996 ifÐ!
 pPage
 ->
 isPšÃd
  ){
 
-996  
+997  
 	`pÿche1PšPage
 (
 pPage
 );
 
-998  
+999  
 pPage
 ;
 
-1000 }ifÐ
+1001 }ifÐ
 ü—‹FÏg
  ){
 
-1002  
+1003  
 	`pÿche1F‘chSge2
 (
 pCache
@@ -237930,35 +237930,35 @@ iKey
 ü—‹FÏg
 );
 
-1006 
+1007 
 	}
 }
 
-1007 #ià
+1008 #ià
 PCACHE1_MIGHT_USE_GROUP_MUTEX
 
 
-1008 
+1009 
 PgHdr1
  *
 	$pÿche1F‘chW™hMu‹x
 (
 
-1009 
+1010 
 sql™e3_pÿche
  *
 p
 ,
 
-1010 
+1011 
 iKey
 ,
 
-1011 
+1012 
 ü—‹FÏg
 
 
-1013 
+1014 
 PCache1
  *
 pCache
@@ -237966,13 +237966,13 @@ pCache
 p
 ;
 
-1014 
+1015 
 PgHdr1
  *
 pPage
 ;
 
-1016 
+1017 
 	`pÿche1EÁ”Mu‹x
 (
 pCache
@@ -237980,7 +237980,7 @@ pCache
 pGroup
 );
 
-1017 
+1018 
 pPage
  = 
 	`pÿche1F‘chNoMu‹x
@@ -237992,7 +237992,7 @@ iKey
 ü—‹FÏg
 );
 
-1018 
+1019 
 	`as£¹
 Ð
 pPage
@@ -238004,7 +238004,7 @@ iMaxKey
 iKey
  );
 
-1019 
+1020 
 	`pÿche1L—veMu‹x
 (
 pCache
@@ -238012,35 +238012,35 @@ pCache
 pGroup
 );
 
-1020  
+1021  
 pPage
 ;
 
-1021 
+1022 
 	}
 }
 
-1023 
+1024 
 sql™e3_pÿche_·ge
  *
 	$pÿche1F‘ch
 (
 
-1024 
+1025 
 sql™e3_pÿche
  *
 p
 ,
 
-1025 
+1026 
 iKey
 ,
 
-1026 
+1027 
 ü—‹FÏg
 
 
-1028 #ià
+1029 #ià
 PCACHE1_MIGHT_USE_GROUP_MUTEX
  || 
 	`defšed
@@ -238048,7 +238048,7 @@ PCACHE1_MIGHT_USE_GROUP_MUTEX
 SQLITE_DEBUG
 )
 
-1029 
+1030 
 PCache1
  *
 pCache
@@ -238056,7 +238056,7 @@ pCache
 p
 ;
 
-1032 
+1033 
 	`as£¹
 Ð
 	`off£tof
@@ -238066,7 +238066,7 @@ PgHdr1
 ·ge
 )==0 );
 
-1033 
+1034 
 	`as£¹
 Ð
 pCache
@@ -238076,7 +238076,7 @@ bPurg—bË
 ü—‹FÏg
 !=1 );
 
-1034 
+1035 
 	`as£¹
 Ð
 pCache
@@ -238086,7 +238086,7 @@ bPurg—bË
 nMš
 ==0 );
 
-1035 
+1036 
 	`as£¹
 Ð
 pCache
@@ -238096,7 +238096,7 @@ bPurg—bË
 nMš
 ==10 );
 
-1036 
+1037 
 	`as£¹
 Ð
 pCache
@@ -238106,7 +238106,7 @@ nMš
 bPurg—bË
  );
 
-1037 
+1038 
 	`as£¹
 Ð
 pCache
@@ -238114,11 +238114,11 @@ pCache
 nHash
 >0 );
 
-1038 #ià
+1039 #ià
 PCACHE1_MIGHT_USE_GROUP_MUTEX
 
 
-1039 ifÐ
+1040 ifÐ
 pCache
 ->
 pGroup
@@ -238126,7 +238126,7 @@ pGroup
 mu‹x
  ){
 
-1040  (
+1041  (
 sql™e3_pÿche_·ge
 *)
 	`pÿche1F‘chW™hMu‹x
@@ -238138,7 +238138,7 @@ iKey
 ü—‹FÏg
 );
 
-1044  (
+1045  (
 sql™e3_pÿche_·ge
 *)
 	`pÿche1F‘chNoMu‹x
@@ -238150,31 +238150,31 @@ iKey
 ü—‹FÏg
 );
 
-1046 
+1047 
 	}
 }
 
-1054 
+1055 
 	$pÿche1UÅš
 (
 
-1055 
+1056 
 sql™e3_pÿche
  *
 p
 ,
 
-1056 
+1057 
 sql™e3_pÿche_·ge
  *
 pPg
 ,
 
-1057 
+1058 
 »u£UÆik–y
 
 
-1059 
+1060 
 PCache1
  *
 pCache
@@ -238182,7 +238182,7 @@ pCache
 p
 ;
 
-1060 
+1061 
 PgHdr1
  *
 pPage
@@ -238190,7 +238190,7 @@ pPage
 pPg
 ;
 
-1061 
+1062 
 PGroup
  *
 pGroup
@@ -238198,7 +238198,7 @@ pGroup
 pCache
 ->pGroup;
 
-1063 
+1064 
 	`as£¹
 Ð
 pPage
@@ -238206,13 +238206,13 @@ pPage
 pCache
 ==pCache );
 
-1064 
+1065 
 	`pÿche1EÁ”Mu‹x
 (
 pGroup
 );
 
-1069 
+1070 
 	`as£¹
 Ð
 pPage
@@ -238222,7 +238222,7 @@ pLruP»v
 pLruNext
 ==0 );
 
-1070 
+1071 
 	`as£¹
 Ð
 pPage
@@ -238230,7 +238230,7 @@ pPage
 isPšÃd
 ==1 );
 
-1072 ifÐ
+1073 ifÐ
 »u£UÆik–y
  || 
 pGroup
@@ -238240,13 +238240,13 @@ nCu¼’tPage
 nMaxPage
  ){
 
-1073 
+1074 
 	`pÿche1RemoveFromHash
 (
 pPage
 , 1);
 
-1076 
+1077 
 PgHdr1
  **
 µFœ¡
@@ -238258,7 +238258,7 @@ pGroup
 pLruNext
 ;
 
-1077 
+1078 
 pPage
 ->
 pLruP»v
@@ -238268,7 +238268,7 @@ pGroup
 Ìu
 ;
 
-1078 (
+1079 (
 pPage
 ->
 pLruNext
@@ -238278,25 +238278,25 @@ pLruNext
 pLruP»v
  =…Page;
 
-1079 *
+1080 *
 µFœ¡
  = 
 pPage
 ;
 
-1080 
+1081 
 pCache
 ->
 nRecyþabË
 ++;
 
-1081 
+1082 
 pPage
 ->
 isPšÃd
  = 0;
 
-1084 
+1085 
 	`pÿche1L—veMu‹x
 (
 pCache
@@ -238304,35 +238304,35 @@ pCache
 pGroup
 );
 
-1085 
+1086 
 	}
 }
 
-1090 
+1091 
 	$pÿche1Rekey
 (
 
-1091 
+1092 
 sql™e3_pÿche
  *
 p
 ,
 
-1092 
+1093 
 sql™e3_pÿche_·ge
  *
 pPg
 ,
 
-1093 
+1094 
 iOld
 ,
 
-1094 
+1095 
 iNew
 
 
-1096 
+1097 
 PCache1
  *
 pCache
@@ -238340,7 +238340,7 @@ pCache
 p
 ;
 
-1097 
+1098 
 PgHdr1
  *
 pPage
@@ -238348,17 +238348,17 @@ pPage
 pPg
 ;
 
-1098 
+1099 
 PgHdr1
  **
 µ
 ;
 
-1099 
+1100 
 h
 ;
 
-1100 
+1101 
 	`as£¹
 Ð
 pPage
@@ -238368,7 +238368,7 @@ iKey
 iOld
  );
 
-1101 
+1102 
 	`as£¹
 Ð
 pPage
@@ -238376,7 +238376,7 @@ pPage
 pCache
 ==pCache );
 
-1103 
+1104 
 	`pÿche1EÁ”Mu‹x
 (
 pCache
@@ -238384,7 +238384,7 @@ pCache
 pGroup
 );
 
-1105 
+1106 
 h
  = 
 iOld
@@ -238394,7 +238394,7 @@ pCache
 nHash
 ;
 
-1106 
+1107 
 µ
  = &
 pCache
@@ -238404,19 +238404,19 @@ pCache
 h
 ];
 
-1107  (*
+1108  (*
 µ
 )!=
 pPage
  ){
 
-1108 
+1109 
 µ
  = &(*µ)->
 pNext
 ;
 
-1110 *
+1111 *
 µ
  = 
 pPage
@@ -238424,7 +238424,7 @@ pPage
 pNext
 ;
 
-1112 
+1113 
 h
  = 
 iNew
@@ -238434,7 +238434,7 @@ pCache
 nHash
 ;
 
-1113 
+1114 
 pPage
 ->
 iKey
@@ -238442,7 +238442,7 @@ iKey
 iNew
 ;
 
-1114 
+1115 
 pPage
 ->
 pNext
@@ -238454,7 +238454,7 @@ pCache
 h
 ];
 
-1115 
+1116 
 pCache
 ->
 ­Hash
@@ -238464,7 +238464,7 @@ h
 pPage
 ;
 
-1116 ifÐ
+1117 ifÐ
 iNew
 >
 pCache
@@ -238472,7 +238472,7 @@ pCache
 iMaxKey
  ){
 
-1117 
+1118 
 pCache
 ->
 iMaxKey
@@ -238480,7 +238480,7 @@ iMaxKey
 iNew
 ;
 
-1120 
+1121 
 	`pÿche1L—veMu‹x
 (
 pCache
@@ -238488,11 +238488,11 @@ pCache
 pGroup
 );
 
-1121 
+1122 
 	}
 }
 
-1130 
+1131 
 	$pÿche1Trunÿ‹
 (
 sql™e3_pÿche
@@ -238502,7 +238502,7 @@ p
 iLim™
 ){
 
-1131 
+1132 
 PCache1
  *
 pCache
@@ -238510,7 +238510,7 @@ pCache
 p
 ;
 
-1132 
+1133 
 	`pÿche1EÁ”Mu‹x
 (
 pCache
@@ -238518,7 +238518,7 @@ pCache
 pGroup
 );
 
-1133 ifÐ
+1134 ifÐ
 iLim™
 <=
 pCache
@@ -238526,7 +238526,7 @@ pCache
 iMaxKey
  ){
 
-1134 
+1135 
 	`pÿche1Trunÿ‹Un§ã
 (
 pCache
@@ -238534,7 +238534,7 @@ pCache
 iLim™
 );
 
-1135 
+1136 
 pCache
 ->
 iMaxKey
@@ -238542,7 +238542,7 @@ iMaxKey
 iLim™
 -1;
 
-1137 
+1138 
 	`pÿche1L—veMu‹x
 (
 pCache
@@ -238550,11 +238550,11 @@ pCache
 pGroup
 );
 
-1138 
+1139 
 	}
 }
 
-1145 
+1146 
 	$pÿche1De¡roy
 (
 sql™e3_pÿche
@@ -238562,7 +238562,7 @@ sql™e3_pÿche
 p
 ){
 
-1146 
+1147 
 PCache1
  *
 pCache
@@ -238570,7 +238570,7 @@ pCache
 p
 ;
 
-1147 
+1148 
 PGroup
  *
 pGroup
@@ -238578,7 +238578,7 @@ pGroup
 pCache
 ->pGroup;
 
-1148 
+1149 
 	`as£¹
 Ð
 pCache
@@ -238590,13 +238590,13 @@ nMax
 nMš
 ==0) );
 
-1149 
+1150 
 	`pÿche1EÁ”Mu‹x
 (
 pGroup
 );
 
-1150 ifÐ
+1151 ifÐ
 pCache
 ->
 nPage
@@ -238604,7 +238604,7 @@ nPage
 	`pÿche1Trunÿ‹Un§ã
 (pCache, 0);
 
-1151 
+1152 
 	`as£¹
 Ð
 pGroup
@@ -238615,18 +238615,18 @@ pCache
 ->
 nMax
  );
-
-1152 
-pGroup
-->
-nMaxPage
- -ð
-pCache
-->
-nMax
-;
 
 1153 
+pGroup
+->
+nMaxPage
+ -ð
+pCache
+->
+nMax
+;
+
+1154 
 	`as£¹
 Ð
 pGroup
@@ -238638,7 +238638,7 @@ pCache
 nMš
  );
 
-1154 
+1155 
 pGroup
 ->
 nMšPage
@@ -238648,7 +238648,7 @@ pCache
 nMš
 ;
 
-1155 
+1156 
 pGroup
 ->
 mxPšÃd
@@ -238658,24 +238658,16 @@ nMaxPage
 nMšPage
 ;
 
-1156 
+1157 
 	`pÿche1EnfÜûMaxPage
 (
 pCache
 );
 
-1157 
+1158 
 	`pÿche1L—veMu‹x
 (
 pGroup
-);
-
-1158 
-	`sql™e3_ä“
-(
-pCache
-->
-pBulk
 );
 
 1159 
@@ -238683,74 +238675,82 @@ pBulk
 (
 pCache
 ->
-­Hash
+pBulk
 );
 
 1160 
 	`sql™e3_ä“
 (
 pCache
+->
+­Hash
 );
 
 1161 
+	`sql™e3_ä“
+(
+pCache
+);
+
+1162 
 	}
 }
 
-1168 
+1169 
 	$sql™e3PCacheS‘DeçuÉ
 (){
 
-1169 cÚ¡ 
+1170 cÚ¡ 
 sql™e3_pÿche_m‘hods2
  
 deçuÉM‘hods
  = {
 
-1172 
+1173 
 pÿche1In™
 ,
 
-1173 
+1174 
 pÿche1Shutdown
 ,
 
-1174 
+1175 
 pÿche1C»©e
 ,
 
-1175 
+1176 
 pÿche1Cachesize
 ,
 
-1176 
+1177 
 pÿche1PagecouÁ
 ,
 
-1177 
+1178 
 pÿche1F‘ch
 ,
 
-1178 
+1179 
 pÿche1UÅš
 ,
 
-1179 
+1180 
 pÿche1Rekey
 ,
 
-1180 
+1181 
 pÿche1Trunÿ‹
 ,
 
-1181 
+1182 
 pÿche1De¡roy
 ,
 
-1182 
+1183 
 pÿche1Shršk
 
 
-1184 
+1185 
 	`sql™e3_cÚfig
 (
 SQLITE_CONFIG_PCACHE2
@@ -238758,11 +238758,11 @@ SQLITE_CONFIG_PCACHE2
 deçuÉM‘hods
 );
 
-1185 
+1186 
 	}
 }
 
-1190 
+1191 
 	$sql™e3H—d”SizePÿche1
 (){  
 	`ROUND8
@@ -238772,47 +238772,35 @@ PgHdr1
 	}
 }
 
-1196 
+1197 
 sql™e3_mu‹x
  *
 	$sql™e3Pÿche1Mu‹x
 (){
 
-1197  
+1198  
 pÿche1
 .
 mu‹x
 ;
 
-1198 
+1199 
 	}
 }
 
-1200 #ifdeà
+1201 #ifdeà
 SQLITE_ENABLE_MEMORY_MANAGEMENT
 
 
-1210 
+1211 
 	$sql™e3PÿcheR–—£MemÜy
 (
 nReq
 ){
 
-1211 
+1212 
 nF»e
  = 0;
-
-1212 
-	`as£¹
-Ð
-	`sql™e3_mu‹x_nÙh–d
-(
-pÿche1
-.
-g½
-.
-mu‹x
-) );
 
 1213 
 	`as£¹
@@ -238821,22 +238809,34 @@ mu‹x
 (
 pÿche1
 .
+g½
+.
 mu‹x
 ) );
 
-1214 ifÐ
+1214 
+	`as£¹
+Ð
+	`sql™e3_mu‹x_nÙh–d
+(
+pÿche1
+.
+mu‹x
+) );
+
+1215 ifÐ
 sql™e3Glob®CÚfig
 .
 nPage
 ==0 ){
 
-1215 
+1216 
 PgHdr1
  *
 p
 ;
 
-1216 
+1217 
 	`pÿche1EÁ”Mu‹x
 (&
 pÿche1
@@ -238844,13 +238844,13 @@ pÿche1
 g½
 );
 
-1217  (
+1218  (
 nReq
 <0 || 
 nF»e
 <nReq)
 
-1218 && (
+1219 && (
 p
 =
 pÿche1
@@ -238862,13 +238862,13 @@ g½
 pLruP»v
 )!=0
 
-1219 && 
+1220 && 
 p
 ->
 isAnchÜ
 ==0
 
-1221 
+1222 
 nF»e
  +ð
 	`pÿche1MemSize
@@ -238880,11 +238880,11 @@ p
 pBuf
 );
 
-1222 #ifdeà
+1223 #ifdeà
 SQLITE_PCACHE_SEPARATE_HEADER
 
 
-1223 
+1224 
 nF»e
  +ð
 	`sql™e3MemSize
@@ -238892,7 +238892,7 @@ nF»e
 p
 );
 
-1225 
+1226 
 	`as£¹
 Ð
 p
@@ -238900,19 +238900,19 @@ p
 isPšÃd
 ==0 );
 
-1226 
+1227 
 	`pÿche1PšPage
 (
 p
 );
 
-1227 
+1228 
 	`pÿche1RemoveFromHash
 (
 p
 , 1);
 
-1229 
+1230 
 	`pÿche1L—veMu‹x
 (&
 pÿche1
@@ -238920,49 +238920,49 @@ pÿche1
 g½
 );
 
-1231  
+1232  
 nF»e
 ;
 
-1232 
+1233 
 	}
 }
 
-1235 #ifdeà
+1236 #ifdeà
 SQLITE_TEST
 
 
-1240 
+1241 
 	$sql™e3PÿcheSts
 (
 
-1241 *
+1242 *
 ²Cu¼’t
 ,
 
-1242 *
+1243 *
 ²Max
 ,
 
-1243 *
+1244 *
 ²Mš
 ,
 
-1244 *
+1245 *
 ²RecyþabË
 
 
-1246 
+1247 
 PgHdr1
  *
 p
 ;
 
-1247 
+1248 
 nRecyþabË
  = 0;
 
-1248 
+1249 
 p
 =
 pÿche1
@@ -238976,7 +238976,7 @@ pLruNext
 isAnchÜ
 ;…=p->pLruNext){
 
-1249 
+1250 
 	`as£¹
 Ð
 p
@@ -238984,11 +238984,11 @@ p
 isPšÃd
 ==0 );
 
-1250 
+1251 
 nRecyþabË
 ++;
 
-1252 *
+1253 *
 ²Cu¼’t
  = 
 pÿche1
@@ -238998,7 +238998,7 @@ g½
 nCu¼’tPage
 ;
 
-1253 *
+1254 *
 ²Max
  = ()
 pÿche1
@@ -239008,7 +239008,7 @@ g½
 nMaxPage
 ;
 
-1254 *
+1255 *
 ²Mš
  = ()
 pÿche1
@@ -239018,13 +239018,13 @@ g½
 nMšPage
 ;
 
-1255 *
+1256 *
 ²RecyþabË
  = 
 nRecyþabË
 ;
 
-1256 
+1257 
 	}
 }
 
