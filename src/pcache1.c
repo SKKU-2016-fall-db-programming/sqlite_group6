@@ -1010,6 +1010,8 @@ static PgHdr1 *pcache1FetchNoMutex(
     if( !pPage->isPinned ){
       return pcache1PinPage(pPage);
     }else{
+      //FIXME TAEHYUNG - increase just touchcount value
+      pPage->touchCount++;
       return pPage;
     }
   }else if( createFlag ){
