@@ -7251,6 +7251,8 @@ struct sqlite3_pcache_methods2 {
   void (*xTruncate)(sqlite3_pcache*, unsigned iLimit);
   void (*xDestroy)(sqlite3_pcache*);
   void (*xShrink)(sqlite3_pcache*);
+  //FIXME -JAEHUN - ADD A Function that remove element of lru.
+  void (*xRemoveLru)(sqlite3_pcache_page*);
 };
 
 /*

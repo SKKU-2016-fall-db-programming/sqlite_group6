@@ -1,4 +1,4 @@
-cscope 15 $HOME/others/sqlite/src               0003597200
+cscope 15 $HOME/others/sqlite/src               0003597263
 	@alter.c
 
 15 
@@ -232948,7 +232948,19 @@ PGHDR_DIRTY
 PGHDR_CLEAN
 ))==PGHDR_DIRTY );
 
-558 
+560 
+sql™e3Glob®CÚfig
+.
+pÿche2
+.
+	`xRemoveLru
+(
+p
+->
+pPage
+);
+
+562 
 	`pÿcheMªageDœtyLi¡
 (
 p
@@ -232956,7 +232968,7 @@ p
 PCACHE_DIRTYLIST_ADD
 );
 
-560 
+564 
 	`as£¹
 Ð
 	`sql™e3PÿchePageSª™y
@@ -232964,11 +232976,11 @@ PCACHE_DIRTYLIST_ADD
 p
 ) );
 
-562 
+566 
 	}
 }
 
-568 
+572 
 	$sql™e3PÿcheMakeCËª
 (
 PgHdr
@@ -232976,7 +232988,7 @@ PgHdr
 p
 ){
 
-569 
+573 
 	`as£¹
 Ð
 	`sql™e3PÿchePageSª™y
@@ -232984,7 +232996,7 @@ p
 p
 ) );
 
-570 ifÐ
+574 ifÐ
 	`ALWAYS
 ((
 p
@@ -232994,7 +233006,7 @@ p
 PGHDR_DIRTY
 )!=0) ){
 
-571 
+575 
 	`as£¹
 Ð(
 p
@@ -233004,7 +233016,7 @@ p
 PGHDR_CLEAN
 )==0 );
 
-572 
+576 
 	`pÿcheMªageDœtyLi¡
 (
 p
@@ -233012,7 +233024,7 @@ p
 PCACHE_DIRTYLIST_REMOVE
 );
 
-573 
+577 
 p
 ->
 æags
@@ -233024,7 +233036,7 @@ PGHDR_NEED_SYNC
 PGHDR_WRITEABLE
 );
 
-574 
+578 
 p
 ->
 æags
@@ -233032,7 +233044,7 @@ p
 PGHDR_CLEAN
 ;
 
-575 
+579 
 	`pÿcheT¿û
 (("%p.CLEAN %d\n",
 p
@@ -233042,7 +233054,7 @@ pCache
 pgno
 ));
 
-576 
+580 
 	`as£¹
 Ð
 	`sql™e3PÿchePageSª™y
@@ -233050,23 +233062,23 @@ pgno
 p
 ) );
 
-577 ifÐ
+581 ifÐ
 p
 ->
 nRef
 ==0 ){
 
-578 
+582 
 	`pÿcheUÅš
 (
 p
 );
 
-581 
+585 
 	}
 }
 
-586 
+590 
 	$sql™e3PÿcheCËªAÎ
 (
 PCache
@@ -233074,19 +233086,19 @@ PCache
 pCache
 ){
 
-587 
+591 
 PgHdr
  *
 p
 ;
 
-588 
+592 
 	`pÿcheT¿û
 (("%p.CLEAN-ALL\n",
 pCache
 ));
 
-589  (
+593  (
 p
  = 
 pCache
@@ -233094,17 +233106,17 @@ pCache
 pDœty
 )!=0 ){
 
-590 
+594 
 	`sql™e3PÿcheMakeCËª
 (
 p
 );
 
-592 
+596 
 	}
 }
 
-597 
+601 
 	$sql™e3PÿcheCË¬Wr™abË
 (
 PCache
@@ -233112,19 +233124,19 @@ PCache
 pCache
 ){
 
-598 
+602 
 PgHdr
  *
 p
 ;
 
-599 
+603 
 	`pÿcheT¿û
 (("%p.CLEAR-WRITEABLE\n",
 pCache
 ));
 
-600 
+604 
 p
 =
 pCache
@@ -233134,7 +233146,7 @@ pDœty
 pDœtyNext
 ){
 
-601 
+605 
 p
 ->
 æags
@@ -233144,7 +233156,7 @@ PGHDR_NEED_SYNC
 PGHDR_WRITEABLE
 );
 
-603 
+607 
 pCache
 ->
 pSynûd
@@ -233152,11 +233164,11 @@ pSynûd
 pDœtyTaž
 ;
 
-604 
+608 
 	}
 }
 
-609 
+613 
 	$sql™e3PÿcheCË¬SyncFÏgs
 (
 PCache
@@ -233164,13 +233176,13 @@ PCache
 pCache
 ){
 
-610 
+614 
 PgHdr
  *
 p
 ;
 
-611 
+615 
 p
 =
 pCache
@@ -233180,7 +233192,7 @@ pDœty
 pDœtyNext
 ){
 
-612 
+616 
 p
 ->
 æags
@@ -233188,7 +233200,7 @@ p
 PGHDR_NEED_SYNC
 ;
 
-614 
+618 
 pCache
 ->
 pSynûd
@@ -233196,11 +233208,11 @@ pSynûd
 pDœtyTaž
 ;
 
-615 
+619 
 	}
 }
 
-620 
+624 
 	$sql™e3PÿcheMove
 (
 PgHdr
@@ -233212,7 +233224,7 @@ Pgno
 ÃwPgno
 ){
 
-621 
+625 
 PCache
  *
 pCache
@@ -233220,7 +233232,7 @@ pCache
 p
 ->pCache;
 
-622 
+626 
 	`as£¹
 Ð
 p
@@ -233228,13 +233240,13 @@ p
 nRef
 >0 );
 
-623 
+627 
 	`as£¹
 Ð
 ÃwPgno
 >0 );
 
-624 
+628 
 	`as£¹
 Ð
 	`sql™e3PÿchePageSª™y
@@ -233242,7 +233254,7 @@ nRef
 p
 ) );
 
-625 
+629 
 	`pÿcheT¿û
 (("%p.MOVE %d -> %d\n",
 pCache
@@ -233254,7 +233266,7 @@ pgno
 ÃwPgno
 ));
 
-626 
+630 
 sql™e3Glob®CÚfig
 .
 pÿche2
@@ -233272,7 +233284,7 @@ pgno
 ÃwPgno
 );
 
-627 
+631 
 p
 ->
 pgno
@@ -233280,7 +233292,7 @@ pgno
 ÃwPgno
 ;
 
-628 ifÐ(
+632 ifÐ(
 p
 ->
 æags
@@ -233290,7 +233302,7 @@ PGHDR_DIRTY
 PGHDR_NEED_SYNC
 ) ){
 
-629 
+633 
 	`pÿcheMªageDœtyLi¡
 (
 p
@@ -233298,11 +233310,11 @@ p
 PCACHE_DIRTYLIST_FRONT
 );
 
-631 
+635 
 	}
 }
 
-642 
+646 
 	$sql™e3PÿcheTrunÿ‹
 (
 PCache
@@ -233314,23 +233326,23 @@ Pgno
 pgno
 ){
 
-643 ifÐ
+647 ifÐ
 pCache
 ->pCache ){
 
-644 
+648 
 PgHdr
  *
 p
 ;
 
-645 
+649 
 PgHdr
  *
 pNext
 ;
 
-646 
+650 
 	`pÿcheT¿û
 (("%p.TRUNCATE %d\n",
 pCache
@@ -233338,7 +233350,7 @@ pCache
 pgno
 ));
 
-647 
+651 
 p
 =
 pCache
@@ -233348,7 +233360,7 @@ pDœty
 pNext
 ){
 
-648 
+652 
 pNext
  = 
 p
@@ -233356,7 +233368,7 @@ p
 pDœtyNext
 ;
 
-653 
+657 
 	`as£¹
 Ð
 p
@@ -233364,13 +233376,13 @@ p
 pgno
 >0 );
 
-654 ifÐ
+658 ifÐ
 p
 ->
 pgno
 >pgno ){
 
-655 
+659 
 	`as£¹
 Ð
 p
@@ -233380,13 +233392,13 @@ p
 PGHDR_DIRTY
  );
 
-656 
+660 
 	`sql™e3PÿcheMakeCËª
 (
 p
 );
 
-659 ifÐ
+663 ifÐ
 pgno
 ==0 && 
 pCache
@@ -233394,13 +233406,13 @@ pCache
 nRefSum
  ){
 
-660 
+664 
 sql™e3_pÿche_·ge
  *
 pPage1
 ;
 
-661 
+665 
 pPage1
  = 
 sql™e3Glob®CÚfig
@@ -233412,13 +233424,13 @@ pÿche2
 pCache
 ->pCache,1,0);
 
-662 ifÐ
+666 ifÐ
 	`ALWAYS
 (
 pPage1
 ) ){
 
-664 
+668 
 	`mem£t
 (
 pPage1
@@ -233430,11 +233442,11 @@ pCache
 szPage
 );
 
-665 
+669 
 pgno
  = 1;
 
-668 
+672 
 sql™e3Glob®CÚfig
 .
 pÿche2
@@ -233446,11 +233458,11 @@ pCache
 pgno
 +1);
 
-670 
+674 
 	}
 }
 
-675 
+679 
 	$sql™e3PÿcheClo£
 (
 PCache
@@ -233458,19 +233470,19 @@ PCache
 pCache
 ){
 
-676 
+680 
 	`as£¹
 Ð
 pCache
 ->pCache!=0 );
 
-677 
+681 
 	`pÿcheT¿û
 (("%p.CLOSE\n",
 pCache
 ));
 
-678 
+682 
 sql™e3Glob®CÚfig
 .
 pÿche2
@@ -233480,11 +233492,11 @@ pÿche2
 pCache
 ->pCache);
 
-679 
+683 
 	}
 }
 
-684 
+688 
 	$sql™e3PÿcheCË¬
 (
 PCache
@@ -233492,17 +233504,17 @@ PCache
 pCache
 ){
 
-685 
+689 
 	`sql™e3PÿcheTrunÿ‹
 (
 pCache
 , 0);
 
-686 
+690 
 	}
 }
 
-692 
+696 
 PgHdr
  *
 	$pÿcheM”geDœtyLi¡
@@ -233514,7 +233526,7 @@ pA
 pB
 ){
 
-693 
+697 
 PgHdr
  
 »suÉ
@@ -233522,13 +233534,13 @@ PgHdr
 pTaž
 ;
 
-694 
+698 
 pTaž
  = &
 »suÉ
 ;
 
-695 
+699 
 	`as£¹
 Ð
 pA
@@ -233536,7 +233548,7 @@ pA
 pB
 !=0 );
 
-697 ifÐ
+701 ifÐ
 pA
 ->
 pgno
@@ -233544,37 +233556,29 @@ pgno
 pB
 ->pgno ){
 
-698 
-pTaž
-->
-pDœty
- = 
-pA
-;
-
-699 
-pTaž
- = 
-pA
-;
-
-700 
-pA
- =…A->
-pDœty
-;
-
-701 ifÐ
-pA
-==0 ){
-
 702 
 pTaž
 ->
 pDœty
  = 
-pB
+pA
 ;
+
+703 
+pTaž
+ = 
+pA
+;
+
+704 
+pA
+ =…A->
+pDœty
+;
+
+705 ifÐ
+pA
+==0 ){
 
 706 
 pTaž
@@ -233584,23 +233588,31 @@ pDœty
 pB
 ;
 
-707 
+710 
+pTaž
+->
+pDœty
+ = 
+pB
+;
+
+711 
 pTaž
  = 
 pB
 ;
 
-708 
+712 
 pB
  =…B->
 pDœty
 ;
 
-709 ifÐ
+713 ifÐ
 pB
 ==0 ){
 
-710 
+714 
 pTaž
 ->
 pDœty
@@ -233608,23 +233620,23 @@ pDœty
 pA
 ;
 
-715  
+719  
 »suÉ
 .
 pDœty
 ;
 
-716 
+720 
 	}
 }
 
-728 
+732 
 	#N_SORT_BUCKET
  32
 
 	)
 
-729 
+733 
 PgHdr
  *
 	$pÿcheSÜtDœtyLi¡
@@ -233634,7 +233646,7 @@ PgHdr
 pIn
 ){
 
-730 
+734 
 PgHdr
  *
 a
@@ -233644,27 +233656,27 @@ N_SORT_BUCKET
 p
 ;
 
-731 
+735 
 i
 ;
 
-732 
+736 
 	`mem£t
 (
 a
 , 0, (a));
 
-733  
+737  
 pIn
  ){
 
-734 
+738 
 p
  = 
 pIn
 ;
 
-735 
+739 
 pIn
  = 
 p
@@ -233672,13 +233684,13 @@ p
 pDœty
 ;
 
-736 
+740 
 p
 ->
 pDœty
  = 0;
 
-737 
+741 
 i
 =0; 
 	`ALWAYS
@@ -233686,13 +233698,13 @@ i
 N_SORT_BUCKET
 -1); i++){
 
-738 ifÐ
+742 ifÐ
 a
 [
 i
 ]==0 ){
 
-739 
+743 
 a
 [
 i
@@ -233700,7 +233712,7 @@ i
 p
 ;
 
-742 
+746 
 p
  = 
 	`pÿcheM”geDœtyLi¡
@@ -233710,13 +233722,13 @@ a
 i
 ],…);
 
-743 
+747 
 a
 [
 i
 ] = 0;
 
-746 ifÐ
+750 ifÐ
 	`NEVER
 (
 i
@@ -233724,7 +233736,7 @@ i
 N_SORT_BUCKET
 -1) ){
 
-750 
+754 
 a
 [
 i
@@ -233734,25 +233746,25 @@ i
 p
 );
 
-753 
+757 
 p
  = 
 a
 [0];
 
-754 
+758 
 i
 =1; i<
 N_SORT_BUCKET
 ; i++){
 
-755 ifÐ
+759 ifÐ
 a
 [
 i
 ]==0 ) ;
 
-756 
+760 
 p
  =… ? 
 	`pÿcheM”geDœtyLi¡
@@ -233762,15 +233774,15 @@ a
 i
 ]) :‡[i];
 
-758  
+762  
 p
 ;
 
-759 
+763 
 	}
 }
 
-764 
+768 
 PgHdr
  *
 	$sql™e3PÿcheDœtyLi¡
@@ -233780,13 +233792,13 @@ PCache
 pCache
 ){
 
-765 
+769 
 PgHdr
  *
 p
 ;
 
-766 
+770 
 p
 =
 pCache
@@ -233796,7 +233808,7 @@ pDœty
 pDœtyNext
 ){
 
-767 
+771 
 p
 ->
 pDœty
@@ -233804,7 +233816,7 @@ pDœty
 pDœtyNext
 ;
 
-769  
+773  
 	`pÿcheSÜtDœtyLi¡
 (
 pCache
@@ -233812,11 +233824,11 @@ pCache
 pDœty
 );
 
-770 
+774 
 	}
 }
 
-778 
+782 
 	$sql™e3PÿcheRefCouÁ
 (
 PCache
@@ -233824,17 +233836,17 @@ PCache
 pCache
 ){
 
-779  
+783  
 pCache
 ->
 nRefSum
 ;
 
-780 
+784 
 	}
 }
 
-785 
+789 
 	$sql™e3PÿchePageRefcouÁ
 (
 PgHdr
@@ -233842,17 +233854,17 @@ PgHdr
 p
 ){
 
-786  
+790  
 p
 ->
 nRef
 ;
 
-787 
+791 
 	}
 }
 
-792 
+796 
 	$sql™e3PÿchePagecouÁ
 (
 PCache
@@ -233860,13 +233872,13 @@ PCache
 pCache
 ){
 
-793 
+797 
 	`as£¹
 Ð
 pCache
 ->pCache!=0 );
 
-794  
+798  
 sql™e3Glob®CÚfig
 .
 pÿche2
@@ -233876,15 +233888,15 @@ pÿche2
 pCache
 ->pCache);
 
-795 
+799 
 	}
 }
 
-797 #ifdeà
+801 #ifdeà
 SQLITE_TEST
 
 
-801 
+805 
 	$sql™e3PÿcheG‘Cachesize
 (
 PCache
@@ -233892,17 +233904,17 @@ PCache
 pCache
 ){
 
-802  
+806  
 	`numb”OfCachePages
 (
 pCache
 );
 
-803 
+807 
 	}
 }
 
-809 
+813 
 	$sql™e3PÿcheS‘Cachesize
 (
 PCache
@@ -233912,13 +233924,13 @@ pCache
 mxPage
 ){
 
-810 
+814 
 	`as£¹
 Ð
 pCache
 ->pCache!=0 );
 
-811 
+815 
 pCache
 ->
 szCache
@@ -233926,7 +233938,7 @@ szCache
 mxPage
 ;
 
-812 
+816 
 sql™e3Glob®CÚfig
 .
 pÿche2
@@ -233936,17 +233948,17 @@ pÿche2
 pCache
 ->pCache,
 
-813 
+817 
 	`numb”OfCachePages
 (
 pCache
 ));
 
-814 
+818 
 	}
 }
 
-821 
+825 
 	$sql™e3PÿcheS‘Spžlsize
 (
 PCache
@@ -233956,11 +233968,11 @@ p
 mxPage
 ){
 
-822 
+826 
 »s
 ;
 
-823 
+827 
 	`as£¹
 Ð
 p
@@ -233968,15 +233980,15 @@ p
 pCache
 !=0 );
 
-824 ifÐ
+828 ifÐ
 mxPage
  ){
 
-825 ifÐ
+829 ifÐ
 mxPage
 <0 ){
 
-826 
+830 
 mxPage
  = ()((-1024*(
 i64
@@ -233988,7 +234000,7 @@ szPage
 szExŒa
 ));
 
-828 
+832 
 p
 ->
 szSpžl
@@ -233996,7 +234008,7 @@ szSpžl
 mxPage
 ;
 
-830 
+834 
 »s
  = 
 	`numb”OfCachePages
@@ -234004,7 +234016,7 @@ mxPage
 p
 );
 
-831 ifÐ
+835 ifÐ
 »s
 <
 p
@@ -234012,15 +234024,15 @@ p
 szSpžl
  )„es =…->szSpill;
 
-832  
+836  
 »s
 ;
 
-833 
+837 
 	}
 }
 
-838 
+842 
 	$sql™e3PÿcheShršk
 (
 PCache
@@ -234028,13 +234040,13 @@ PCache
 pCache
 ){
 
-839 
+843 
 	`as£¹
 Ð
 pCache
 ->pCache!=0 );
 
-840 
+844 
 sql™e3Glob®CÚfig
 .
 pÿche2
@@ -234044,11 +234056,11 @@ pÿche2
 pCache
 ->pCache);
 
-841 
+845 
 	}
 }
 
-847 
+851 
 	$sql™e3H—d”SizePÿche
 (){  
 	`ROUND8
@@ -234058,7 +234070,7 @@ PgHdr
 	}
 }
 
-853 
+857 
 	$sql™e3PCacheP”ûÁDœty
 (
 PCache
@@ -234066,17 +234078,17 @@ PCache
 pCache
 ){
 
-854 
+858 
 PgHdr
  *
 pDœty
 ;
 
-855 
+859 
 nDœty
  = 0;
 
-856 
+860 
 nCache
  = 
 	`numb”OfCachePages
@@ -234084,7 +234096,7 @@ nCache
 pCache
 );
 
-857 
+861 
 pDœty
 =
 pCache
@@ -234094,7 +234106,7 @@ pDœtyNext
 nDœty
 ++;
 
-858  
+862  
 nCache
  ? ()(((
 i64
@@ -234102,11 +234114,11 @@ i64
 nDœty
  * 100) /‚Cache) : 0;
 
-859 
+863 
 	}
 }
 
-861 #ià
+865 #ià
 defšed
 (
 SQLITE_CHECK_PAGES
@@ -234114,7 +234126,7 @@ SQLITE_CHECK_PAGES
 SQLITE_DEBUG
 )
 
-867 
+871 
 sql™e3PÿcheI‹¿‹Dœty
 (
 PCache
@@ -234126,13 +234138,13 @@ xI‹r
 PgHdr
  *)){
 
-868 
+872 
 PgHdr
  *
 pDœty
 ;
 
-869 
+873 
 pDœty
 =
 pCache
@@ -234140,13 +234152,13 @@ pCache
 pDœtyNext
 ){
 
-870 
+874 
 	`xI‹r
 (
 pDœty
 );
 
-872 
+876 
 	}
 }
 
