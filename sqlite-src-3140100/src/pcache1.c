@@ -933,6 +933,7 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
   */
   if( !pPage ){
     pPage = pcache1AllocPage(pCache, createFlag==1);
+	pCache->nCleanPage++;
   }
 
   if( pPage ){
@@ -946,6 +947,7 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
     pPage->pLruPrev = 0;
     pPage->pLruNext = 0;
     */
+	pCache->nCleanPage++;
     pPage->isPinned = 1;
     pPage->nTouch = 1;
     if(pGroup->midPoint==&pGroup->lru){
@@ -965,10 +967,12 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
     }
   }
   //FIXME
-  PgHdr1 *pMidPage = &pGroup->lru;
+  /*PgHdr1 *pMidPage = &pGroup->lru;
   int count = 0;
   while( pMidPage && (count == pCache->nRecyclable/2+1) ){ pMidPage = pMidPage->pNext; count++;}
-  pGroup->midPoint = pMidPage;
+  pGroup->midPoint = pMidPage;*/
+  if( pCache->nCleanPage%2==0 && pCache->nCleanPage > 3)
+	  pGroup->midPoint = pGroup->midPoint->pLruPrev;
 
   return pPage;
 }
@@ -1163,7 +1167,7 @@ static void pcache1Unpin(
         	ppMid->pLruPrev->pLruNext = pPage;
         	ppMid->pLruPrev = pPage;
         	pCache->nRecyclable++;
-        	if(pCache->nCleanPage%2 == 1){
+        	if(pCache->nCleanPage%2 == 0 && pCache->nCleanPage > 3){
             	ppMid = ppMid->pLruPrev;
         	}
 
