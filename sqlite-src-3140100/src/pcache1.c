@@ -1254,11 +1254,13 @@ static void pcache1RemoveLru(sqlite3_pcache_page *pPg){
   assert( pPage!=0 );
   assert( pPage->isPinned==0 );
   pCache = pPage->pCache;
-  assert( pPage->pLruNext );
-  assert( pPage->pLruPrev );
+  //assert( pPage->pLruNext );
+  //assert( pPage->pLruPrev );
   assert( sqlite3_mutex_held(pCache->pGroup->mutex) );
-  pPage->pLruPrev->pLruNext = pPage->pLruNext;
-  pPage->pLruNext->pLruPrev = pPage->pLruPrev;
+  if (pPage->pLruPrev && pPage->pLruNext) {
+    pPage->pLruPrev->pLruNext = pPage->pLruNext;
+    pPage->pLruNext->pLruPrev = pPage->pLruPrev;
+  }
   pPage->pLruNext = 0;
   pPage->pLruPrev = 0;
   assert( pPage->isAnchor==0 );
