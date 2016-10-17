@@ -1278,7 +1278,7 @@ static void pcache1Destroy(sqlite3_pcache *p){
 static void pcache1RemoveLru(sqlite3_pcache_page *pPg){
   PgHdr1 *pPage = (PgHdr1 *)pPg;
   PCache1 *pCache;
-  PGroup1 *pGroup;
+  PGroup *pGroup;
 
   assert( pPage!=0 );
   assert( pPage->isPinned==0 );
@@ -1300,7 +1300,7 @@ static void pcache1RemoveLru(sqlite3_pcache_page *pPg){
   }
   if (searchPoint == &pGroup->lru){
     isLeft = 1;
-  }else if (searchPoin == pGroup->midPoint){
+  }else if (searchPoint == pGroup->midPoint){
     isLeft = 0;
   }
   if (isLeft==1){
