@@ -957,7 +957,6 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
     pPage->pLruPrev = 0;
     pPage->pLruNext = 0;
     */
-	pCache->nCleanPage++;
     pPage->isPinned = 1;
     pPage->nTouch = 1;
     if(pGroup->midPoint==&pGroup->lru){
@@ -975,23 +974,18 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
     if( iKey>pCache->iMaxKey ){
       pCache->iMaxKey = iKey;
     }
+
+    if( pCache->nCleanPage == 1)
+            pGroup->midPoint = pPage;
+    else if( pCache->nCleanPage%2==0 && pCache->nCleanPage > 3)
+            pGroup->midPoint = pGroup->midPoint->pLruPrev;
+
   }
   //FIXME
-<<<<<<< HEAD
   /*PgHdr1 *pMidPage = &pGroup->lru;
   int count = 0;
   while( pMidPage && (count == pCache->nRecyclable/2+1) ){ pMidPage = pMidPage->pNext; count++;}
   pGroup->midPoint = pMidPage;*/
-  if( pCache->nCleanPage == 1)
-	  pGroup->midPoint = pPage;
-  else if( pCache->nCleanPage%2==0 && pCache->nCleanPage > 3)
-	  pGroup->midPoint = pGroup->midPoint->pLruPrev;
-=======
-  //PgHdr1 *pMidPage = &pGroup->lru;
-  //int count = 0;
-  //while( pMidPage && (count == pCache->nRecyclable/2+1) ){ pMidPage = pMidPage->pNext; count++;}
-  //pGroup->midPoint = pMidPage;
->>>>>>> JSMJ-jeff
 
   return pPage;
 }
