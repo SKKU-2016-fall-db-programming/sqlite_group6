@@ -1048,8 +1048,11 @@ static PgHdr1 *pcache1FetchNoMutex(
   ** subsequent steps to try to create the page. */
   if( pPage ){
     if( !pPage->isPinned ){
+      //TODO
       return pcache1PinPage(pPage);
     }else{
+      //FIXME TH
+      pPage->nTouch++;
       return pPage;
     }
   }else if( createFlag ){
@@ -1134,7 +1137,7 @@ static void pcache1Unpin(
     pcache1RemoveFromHash(pPage, 1);
   }else{
     /* Add the page to the PGroup LRU list. */
-    //FIXME
+    //FIXME TH
     /*
     PgHdr1 **ppFirst = &pGroup->lru.pLruNext;
     pPage->pLruPrev = &pGroup->lru;
@@ -1142,6 +1145,25 @@ static void pcache1Unpin(
     *ppFirst = pPage;
     pCache->nRecyclable++;
     */
+    if(pGroup->midPoint == &pGroup->lru){
+        PgHdr1 **ppFirst = &pGroup->lru.pLruNext;
+        pPage->pLruPrev = &pGroup->lru;
+        (pPage->pLruNext = *ppFirst)->pLruPrev = pPage;
+        *ppFirst = pPage;
+        pCache->nRecyclable++;
+    }
+    else{
+        PgHdr1 **ppMid = &pGroup->midPoint;
+        pPage->pLruNext = *ppMid;
+        pPage->pLruPrev = ->*ppMid->pLruPrev;
+        *ppMid->pLruPrev->pLruNext = pPage;
+        *ppMid->pLruPrev = pPage;
+        pCache->nRecyclable++;
+        if(pCache->nRecyclable%2 == 1){
+            *ppMid = *ppMid->pLruPrev;
+        }
+    }
+
     pPage->isPinned = 0;
   }
 
