@@ -1246,6 +1246,26 @@ static void pcache1Destroy(sqlite3_pcache *p){
   sqlite3_free(pCache);
 }
 
+//FIXME - JAEHUN - A Function used for removing an item when make PgHdr dirty.
+static void pcache1RemoveLru(sqlite3_pcache_page *pPg){
+  PgHdr1 *pPage = (PgHdr1 *)pPg;
+  PCache1 *pCache;
+
+  assert( pPage!=0 );
+  assert( pPage->isPinned==0 );
+  pCache = pPage->pCache;
+  assert( pPage->pLruNext );
+  assert( pPage->pLruPrev );
+  assert( sqlite3_mutex_held(pCache->pGroup->mutex) );
+  pPage->pLruPrev->pLruNext = pPage->pLruNext;
+  pPage->pLruNext->pLruPrev = pPage->pLruPrev;
+  pPage->pLruNext = 0;
+  pPage->pLruPrev = 0;
+  assert( pPage->isAnchor==0 );
+  assert( pCache->pGroup->lru.isAnchor==1 );
+  pCache->nRecyclable--; //TODO - JAEHUN check it has to have already shrinked at the time of pinned.
+}
+
 /*
 ** This function is called during initialization (sqlite3_initialize()) to
 ** install the default pluggable cache module, assuming the user has not

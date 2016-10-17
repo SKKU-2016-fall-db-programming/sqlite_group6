@@ -7251,6 +7251,7 @@ struct sqlite3_pcache_methods2 {
   void (*xTruncate)(sqlite3_pcache*, unsigned iLimit);
   void (*xDestroy)(sqlite3_pcache*);
   void (*xShrink)(sqlite3_pcache*);
+  void (*xRemoveLru)(sqlite3_pcache_page*); //FIXME - JAEHUN - ADD pcache1 function with new function pcache1RemoveLru
 };
 
 /*
