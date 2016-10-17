@@ -13,6 +13,7 @@
 */
 #include "sqliteInt.h"
 
+
 /*
 ** A complete page cache is an instance of this structure.  Every
 ** entry in the cache holds a single page of the database file.  The
@@ -555,6 +556,7 @@ void sqlite3PcacheMakeDirty(PgHdr *p){
       p->flags ^= (PGHDR_DIRTY|PGHDR_CLEAN);
       pcacheTrace(("%p.DIRTY %d\n",p->pCache,p->pgno));
       assert( (p->flags & (PGHDR_DIRTY|PGHDR_CLEAN))==PGHDR_DIRTY );
+
       //FIXME - JAEHUN - CALL a Function that remove PgHdr1 of the PgHdr in lru.
       sqlite3GlobalConfig.pcache2.xRemoveLru(p->pPage);
       pcacheManageDirtyList(p, PCACHE_DIRTYLIST_ADD);

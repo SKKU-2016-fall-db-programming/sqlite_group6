@@ -18,6 +18,7 @@
 typedef struct PgHdr PgHdr;
 typedef struct PCache PCache;
 
+
 /*
 ** Every page in the cache is controlled by an instance of the following
 ** structure.

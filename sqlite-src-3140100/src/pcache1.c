@@ -1285,7 +1285,8 @@ void sqlite3PCacheSetDefault(void){
     pcache1Rekey,            /* xRekey */
     pcache1Truncate,         /* xTruncate */
     pcache1Destroy,          /* xDestroy */
-    pcache1Shrink            /* xShrink */
+    pcache1Shrink,            /* xShrink */
+    pcache1RemoveLru
   };
   sqlite3_config(SQLITE_CONFIG_PCACHE2, &defaultMethods);
 }

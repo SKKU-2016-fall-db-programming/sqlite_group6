@@ -15,7 +15,7 @@
 # The toplevel directory of the source tree.  This is the directory
 # that contains this "Makefile.in" and the "configure.in" script.
 #
-TOP = /home/kim/Desktop/sqlite/sqlite-src-3140100
+TOP = /home/jeff/others/sqlite/sqlite-src-3140100
 
 # C Compiler and options for use in building executables that
 # will run on the platform that is doing the build.
@@ -54,12 +54,12 @@ LIBTCL =
 
 # Compiler options needed for programs that use the readline() library.
 #
-READLINE_FLAGS = -DHAVE_READLINE=0 
+READLINE_FLAGS = -DHAVE_READLINE=1 -I/usr/include/readline
 READLINE_FLAGS += -DHAVE_EDITLINE=0
 
 # The library that programs using readline() must link against.
 #
-LIBREADLINE = 
+LIBREADLINE = -lreadline -lncurses 
 
 # Should the database engine be compiled threadsafe
 #

@@ -13,6 +13,63 @@
 */
 #include "sqliteInt.h"
 
+
+//FIXME - JAEHUN
+//typedef struct PgHdr1 PgHdr1;
+//typedef struct PGroup PGroup;
+//typedef struct PCache1 PCache1;
+
+//struct PgHdr1 {
+//  sqlite3_pcache_page page;      /* Base class. Must be first. pBuf & pExtra */
+//  unsigned int iKey;             /* Key value (page number) */
+//  u8 isPinned;                   /* Page in use, not on the LRU list */
+//  u8 isBulkLocal;                /* This page from bulk local storage */
+//  u8 isAnchor;                   /* This is the PGroup.lru element */
+//  PgHdr1 *pNext;                 /* Next in hash table chain */
+//  PCache1 *pCache;               /* Cache that currently owns this page */
+//  u32 nTouch;                    /*Number of Touch count*/ //FIXME
+//  PgHdr1 *pLruNext;              /* Next in LRU list of unpinned pages */
+//  PgHdr1 *pLruPrev;              /* Previous in LRU list of unpinned pages */
+//};
+
+//struct PGroup {
+//  sqlite3_mutex *mutex;          /* MUTEX_STATIC_LRU or NULL */
+//  unsigned int nMaxPage;         /* Sum of nMax for purgeable caches */
+//  unsigned int nMinPage;         /* Sum of nMin for purgeable caches */
+//  unsigned int mxPinned;         /* nMaxpage + 10 - nMinPage */
+//  unsigned int nCurrentPage;     /* Number of purgeable pages allocated */
+ // PgHdr1 *midPoint;               /*Indicate of the middle of clean lru*/ //FIXME
+ // PgHdr1 lru;                    /* The beginning and end of the LRU list */
+//};
+
+//struct PCache1 {
+  /* Cache configuration parameters. Page size (szPage) and the purgeable
+  ** flag (bPurgeable) are set when the cache is created. nMax may be 
+  ** modified at any time by a call to the pcache1Cachesize() method.
+  ** The PGroup mutex must be held when accessing nMax.
+  */
+//  PGroup *pGroup;                     /* PGroup this cache belongs to */
+//  int szPage;                         /* Size of database content section */
+//  int szExtra;                        /* sizeof(MemPage)+sizeof(PgHdr) */
+//  int szAlloc;                        /* Total size of one pcache line */
+//  int bPurgeable;                     /* True if cache is purgeable */
+//  unsigned int nMin;                  /* Minimum number of pages reserved */
+//  unsigned int nMax;                  /* Configured "cache_size" value */
+//  unsigned int n90pct;                /* nMax*9/10 */
+//  unsigned int iMaxKey;               /* Largest key seen since xTruncate() */
+//
+  /* Hash table of all pages. The following variables may only be accessed
+  ** when the accessor is holding the PGroup mutex.
+  */
+//  unsigned int nRecyclable;           /* Number of pages in the LRU list */
+//  unsigned int nPage;                 /* Total number of pages in apHash */
+//  unsigned int nHash;                 /* Number of slots in apHash[] */
+//  PgHdr1 **apHash;                    /* Hash table for fast lookup by key */
+//  PgHdr1 *pFree;                      /* List of unused pcache-local pages */
+//  void *pBulk;                        /* Bulk memory used by pcache-local */
+//};
+
+
 /*
 ** A complete page cache is an instance of this structure.  Every
 ** entry in the cache holds a single page of the database file.  The
@@ -555,6 +612,29 @@ void sqlite3PcacheMakeDirty(PgHdr *p){
       p->flags ^= (PGHDR_DIRTY|PGHDR_CLEAN);
       pcacheTrace(("%p.DIRTY %d\n",p->pCache,p->pgno));
       assert( (p->flags & (PGHDR_DIRTY|PGHDR_CLEAN))==PGHDR_DIRTY );
+
+
+      //FIXME - JAEHUN - CALL a Function that remove PgHdr1 of the PgHdr in lru.
+      sqlite3GlobalConfig.pcache2.xRemoveLru(p->pPage);
+/*
+      PgHdr1 *pPage = (PgHdr1 *)p->pPage;
+      PCache1 *pCache;
+
+      assert( pPage!=0 );
+      assert( pPage->isPinned==0 );
+      pCache = pPage->pCache;
+      assert( pPage->pLruNext );
+      assert( pPage->pLruPrev );
+      assert( sqlite3_mutex_held(pCache->pGroup->mutex) );
+      pPage->pLruPrev->pLruNext = pPage->pLruNext;
+      pPage->pLruNext->pLruPrev = pPage->pLruPrev;
+      pPage->pLruNext = 0;
+      pPage->pLruPrev = 0;
+      assert( pPage->isAnchor==0 );
+      assert( pCache->pGroup->lru.isAnchor==1 );
+      pCache->nRecyclable--; //TODO - JAEHUN check it has to have already shrinked at the time of pinned.
+*/
+
       pcacheManageDirtyList(p, PCACHE_DIRTYLIST_ADD);
     }
     assert( sqlite3PcachePageSanity(p) );

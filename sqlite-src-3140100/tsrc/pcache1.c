@@ -1048,8 +1048,11 @@ static PgHdr1 *pcache1FetchNoMutex(
   ** subsequent steps to try to create the page. */
   if( pPage ){
     if( !pPage->isPinned ){
+      //TODO
       return pcache1PinPage(pPage);
     }else{
+      //FIXME TH
+      pPage->nTouch++;
       return pPage;
     }
   }else if( createFlag ){
@@ -1134,7 +1137,7 @@ static void pcache1Unpin(
     pcache1RemoveFromHash(pPage, 1);
   }else{
     /* Add the page to the PGroup LRU list. */
-    //FIXME
+    //FIXME TH
     /*
     PgHdr1 **ppFirst = &pGroup->lru.pLruNext;
     pPage->pLruPrev = &pGroup->lru;
@@ -1142,6 +1145,25 @@ static void pcache1Unpin(
     *ppFirst = pPage;
     pCache->nRecyclable++;
     */
+    if(pGroup->midPoint == &pGroup->lru){
+        PgHdr1 **ppFirst = &pGroup->lru.pLruNext;
+        pPage->pLruPrev = &pGroup->lru;
+        (pPage->pLruNext = *ppFirst)->pLruPrev = pPage;
+        *ppFirst = pPage;
+        pCache->nRecyclable++;
+    }
+    else{
+        PgHdr1 *ppMid = pGroup->midPoint;
+        pPage->pLruNext = ppMid;
+        pPage->pLruPrev = ppMid->pLruPrev;
+        ppMid->pLruPrev->pLruNext = pPage;
+        ppMid->pLruPrev = pPage;
+        pCache->nRecyclable++;
+        if(pCache->nRecyclable%2 == 1){
+            ppMid = ppMid->pLruPrev;
+        }
+    }
+
     pPage->isPinned = 0;
   }
 
@@ -1224,6 +1246,26 @@ static void pcache1Destroy(sqlite3_pcache *p){
   sqlite3_free(pCache);
 }
 
+//FIXME - JAEHUN - A Function used for removing an item when make PgHdr dirty.
+static void pcache1RemoveLru(sqlite3_pcache_page *pPg){
+  PgHdr1 *pPage = (PgHdr1 *)pPg;
+  PCache1 *pCache;
+
+  assert( pPage!=0 );
+  assert( pPage->isPinned==0 );
+  pCache = pPage->pCache;
+  assert( pPage->pLruNext );
+  assert( pPage->pLruPrev );
+  assert( sqlite3_mutex_held(pCache->pGroup->mutex) );
+  pPage->pLruPrev->pLruNext = pPage->pLruNext;
+  pPage->pLruNext->pLruPrev = pPage->pLruPrev;
+  pPage->pLruNext = 0;
+  pPage->pLruPrev = 0;
+  assert( pPage->isAnchor==0 );
+  assert( pCache->pGroup->lru.isAnchor==1 );
+  pCache->nRecyclable--; //TODO - JAEHUN check it has to have already shrinked at the time of pinned.
+}
+
 /*
 ** This function is called during initialization (sqlite3_initialize()) to
 ** install the default pluggable cache module, assuming the user has not
@@ -1243,7 +1285,8 @@ void sqlite3PCacheSetDefault(void){
     pcache1Rekey,            /* xRekey */
     pcache1Truncate,         /* xTruncate */
     pcache1Destroy,          /* xDestroy */
-    pcache1Shrink            /* xShrink */
+    pcache1Shrink,            /* xShrink */
+    pcache1RemoveLru
   };
   sqlite3_config(SQLITE_CONFIG_PCACHE2, &defaultMethods);
 }
