@@ -1295,7 +1295,7 @@ static void pcache1RemoveLru(sqlite3_pcache_page *pPg){
 
   PgHdr1 *searchPoint = pPage;
   int     isLeft = 0;
-  while(searchPoint != &pGroup->lru || searchPoint != pGroup->midPoint ){
+  while(searchPoint != &pGroup->lru && searchPoint != pGroup->midPoint ){
     searchPoint = searchPoint->pLruPrev;
   }
   if (searchPoint == &pGroup->lru){
