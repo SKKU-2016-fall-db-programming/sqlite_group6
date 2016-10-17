@@ -1147,24 +1147,31 @@ static void pcache1Unpin(
     *ppFirst = pPage;
     pCache->nRecyclable++;
     */
-    if(pGroup->midPoint == &pGroup->lru){
-        PgHdr1 **ppFirst = &pGroup->lru.pLruNext;
-        pPage->pLruPrev = &pGroup->lru;
-        (pPage->pLruNext = *ppFirst)->pLruPrev = pPage;
-        *ppFirst = pPage;
-        pCache->nRecyclable++;
-    }
-    else{
-        PgHdr1 *ppMid = pGroup->midPoint;
-        pPage->pLruNext = ppMid;
-        pPage->pLruPrev = ppMid->pLruPrev;
-        ppMid->pLruPrev->pLruNext = pPage;
-        ppMid->pLruPrev = pPage;
-        pCache->nRecyclable++;
-        if(pCache->nRecyclable%2 == 1){
-            ppMid = ppMid->pLruPrev;
-        }
-    }
+	if(pPage->pLruPrev == 0 || pPage->pLruNext == 0){ // dirty Page
+		pCache->nCleanPage++;
+		if(pGroup->midPoint == &pGroup->lru){
+        	PgHdr1 **ppFirst = &pGroup->lru.pLruNext;
+        	pPage->pLruPrev = &pGroup->lru;
+        	(pPage->pLruNext = *ppFirst)->pLruPrev = pPage;
+        	*ppFirst = pPage;
+        	pCache->nRecyclable++;
+   		}
+    	else{
+        	PgHdr1 *ppMid = pGroup->midPoint;
+        	pPage->pLruNext = ppMid;
+        	pPage->pLruPrev = ppMid->pLruPrev;
+        	ppMid->pLruPrev->pLruNext = pPage;
+        	ppMid->pLruPrev = pPage;
+        	pCache->nRecyclable++;
+        	if(pCache->nCleanPage%2 == 1){
+            	ppMid = ppMid->pLruPrev;
+        	}
+
+    	}
+	}
+	else{ // Clean Page
+		pCache->nRecyclable++;
+	}
 
     pPage->isPinned = 0;
   }
