@@ -913,6 +913,11 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
           pcache1RemoveFromHash(pPage, 0);
           pPage->pLruPrev->pLruNext = pPage->pLruNext;
           pPage->pLruNext->pLruPrev = pPage->pLruPrev;
+	  if(pCache->nCleanPage > 3 && pCache->nCleanPage % 2 == 1){
+	    pGroup->midPoint = pGroup->midPoint->pLruPrev;
+	  }else if (pCache->nCleanPage<=3){
+	    pGroup->midPoint = pGroup->lru.pLruPrev;
+	  }
           pPage->pLruNext = 0;
           pPage->pLruPrev = 0;
 	  pCache->nCleanPage--;
