@@ -580,7 +580,7 @@ static PgHdr1 *pcache1PinPage(PgHdr1 *pPage){
   pPage->nTouch++;
   assert( pPage->isAnchor==0 );
   assert( pCache->pGroup->lru.isAnchor==1 );
-  //pCache->nRecyclable--;
+  pCache->nRecyclable--;
   return pPage;
 }
 
@@ -894,8 +894,9 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
         //attach tail -> head
         pPage->pLruPrev->pLruNext = pPage->pLruNext;
         pPage->pLruNext->pLruPrev = pPage->pLruPrev;
-        pPage->pLruNext = 0;
-        pPage->pLruPrev = 0;
+	//FIXME - JAEHUN - remove set 0!
+        //pPage->pLruNext = 0;
+        //pPage->pLruPrev = 0;
 
         PgHdr1 **ppFirst = &pGroup->lru.pLruNext;
         pPage->pLruPrev = &pGroup->lru;
@@ -955,7 +956,7 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
       pGroup->midPoint->pLruPrev->pLruNext = pPage;
       pGroup->midPoint->pLruPrev = pPage;
     }
-    pCache->nRecyclable++;
+    //pCache->nRecyclable++;
     *(void **)pPage->page.pExtra = 0;
     pCache->apHash[h] = pPage;
     if( iKey>pCache->iMaxKey ){
@@ -1257,7 +1258,7 @@ static void pcache1RemoveLru(sqlite3_pcache_page *pPg){
   //assert( pPage->pLruNext );
   //assert( pPage->pLruPrev );
   assert( sqlite3_mutex_held(pCache->pGroup->mutex) );
-  if (pPage->pLruPrev && pPage->pLruNext) {
+  if (pPage->pLruPrev && pPage->pLruNext) { //TODO - JAEHUN check it is always in lru.
     pPage->pLruPrev->pLruNext = pPage->pLruNext;
     pPage->pLruNext->pLruPrev = pPage->pLruPrev;
   }
@@ -1265,7 +1266,7 @@ static void pcache1RemoveLru(sqlite3_pcache_page *pPg){
   pPage->pLruPrev = 0;
   assert( pPage->isAnchor==0 );
   assert( pCache->pGroup->lru.isAnchor==1 );
-  pCache->nRecyclable--; //TODO - JAEHUN check it has to have already shrinked at the time of pinned.
+  //pCache->nRecyclable--; //TODO - JAEHUN check it has to have already shrinked at the time of pinned.
 }
 
 /*
