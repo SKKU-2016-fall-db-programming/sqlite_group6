@@ -1155,7 +1155,7 @@ static void pcache1Unpin(
     else{
         PgHdr1 *ppMid = pGroup->midPoint;
         pPage->pLruNext = ppMid;
-        pPage->pLruPrev = ->ppMid->pLruPrev;
+        pPage->pLruPrev = ppMid->pLruPrev;
         ppMid->pLruPrev->pLruNext = pPage;
         ppMid->pLruPrev = pPage;
         pCache->nRecyclable++;
