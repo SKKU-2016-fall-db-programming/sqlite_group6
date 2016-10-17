@@ -1153,14 +1153,14 @@ static void pcache1Unpin(
         pCache->nRecyclable++;
     }
     else{
-        PgHdr1 **ppMid = &pGroup->midPoint;
-        pPage->pLruNext = *ppMid;
-        pPage->pLruPrev = ->*ppMid->pLruPrev;
-        *ppMid->pLruPrev->pLruNext = pPage;
-        *ppMid->pLruPrev = pPage;
+        PgHdr1 *ppMid = pGroup->midPoint;
+        pPage->pLruNext = ppMid;
+        pPage->pLruPrev = ->ppMid->pLruPrev;
+        ppMid->pLruPrev->pLruNext = pPage;
+        ppMid->pLruPrev = pPage;
         pCache->nRecyclable++;
         if(pCache->nRecyclable%2 == 1){
-            *ppMid = *ppMid->pLruPrev;
+            ppMid = ppMid->pLruPrev;
         }
     }
 
