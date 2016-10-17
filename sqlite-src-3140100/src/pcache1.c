@@ -861,6 +861,7 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
   int createFlag
 ){
   unsigned int nPinned;
+  const unsigned int countLimit = 4; //FIXME
   PGroup *pGroup = pCache->pGroup;
   PgHdr1 *pPage = 0;
 
@@ -889,8 +890,9 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
     PCache1 *pOther;
     pPage = pGroup->lru.pLruPrev;
     //FIXME
-    while(pPage && pPage!=&pGroup->lru){
-      if(pPage->nTouch >= 4){
+    while(pPage && pCache->nRecyclable && pPage != &pGroup->lru){
+      PgHdr1 *pPagePrev = pPage->pLruPrev;
+      if(pPage->nTouch >= countLimit){ // FIXME
         //attach tail -> head
         pPage->pLruPrev->pLruNext = pPage->pLruNext;
         pPage->pLruNext->pLruPrev = pPage->pLruPrev;
@@ -914,7 +916,7 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
           break;
         }
       }
-      pPage=pPage->pLruPrev;
+      pPage=pPagePrev;
     }
     //pcache1PinPage(pPage);
     pOther = pPage->pCache;
