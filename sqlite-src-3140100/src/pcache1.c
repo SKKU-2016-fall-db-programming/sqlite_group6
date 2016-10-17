@@ -168,6 +168,7 @@ struct PCache1 {
   unsigned int nRecyclable;           /* Number of pages in the LRU list */
   unsigned int nPage;                 /* Total number of pages in apHash */
   unsigned int nHash;                 /* Number of slots in apHash[] */
+  unsigned int nCleanPage;	      /* FIXME - JAEHUN - Number of clean Pages */
   PgHdr1 **apHash;                    /* Hash table for fast lookup by key */
   PgHdr1 *pFree;                      /* List of unused pcache-local pages */
   void *pBulk;                        /* Bulk memory used by pcache-local */
@@ -782,6 +783,7 @@ static sqlite3_pcache *pcache1Create(int szPage, int szExtra, int bPurgeable){
     pCache->bPurgeable = (bPurgeable ? 1 : 0);
     pcache1EnterMutex(pGroup);
     pcache1ResizeHash(pCache);
+    pCache->nCleanPage = 0; //FIXME - JAEHUN - setup for nCleanPage
     if( bPurgeable ){
       pCache->nMin = 10;
       pGroup->nMinPage += pCache->nMin;
@@ -903,6 +905,7 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
         (pPage->pLruNext = *ppFirst)->pLruPrev = pPage;
         *ppFirst = pPage;
         pPage->nTouch = 0;
+	pGroup->midPoint = pGroup->midPoint->pLruPrev; //FIXME - JAEHUN - midPoint move to PrevPoint
       }else
       {
         if(pPage->isPinned == 0){
@@ -912,6 +915,7 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
           pPage->pLruNext->pLruPrev = pPage->pLruPrev;
           pPage->pLruNext = 0;
           pPage->pLruPrev = 0;
+	  pCache->nCleanPage--;
           break;
         }
       }
@@ -921,6 +925,7 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
     pOther = pPage->pCache;
     if( pOther->szAlloc != pCache->szAlloc ){
       pcache1FreePage(pPage);
+      //pCache->nCleanPage--;//TODO - Check what is right!
       pPage = 0;
     }else{
       pGroup->nCurrentPage -= (pOther->bPurgeable - pCache->bPurgeable);
@@ -956,7 +961,7 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
       pGroup->midPoint->pLruPrev->pLruNext = pPage;
       pGroup->midPoint->pLruPrev = pPage;
     }
-    //pCache->nRecyclable++;
+    pCache->nCleanPage++;
     *(void **)pPage->page.pExtra = 0;
     pCache->apHash[h] = pPage;
     if( iKey>pCache->iMaxKey ){
@@ -964,10 +969,11 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
     }
   }
   //FIXME
-  PgHdr1 *pMidPage = &pGroup->lru;
-  int count = 0;
-  while( pMidPage && (count == pCache->nRecyclable/2+1) ){ pMidPage = pMidPage->pNext; count++;}
-  pGroup->midPoint = pMidPage;
+  //PgHdr1 *pMidPage = &pGroup->lru;
+  //int count = 0;
+  //while( pMidPage && (count == pCache->nRecyclable/2+1) ){ pMidPage = pMidPage->pNext; count++;}
+  //pGroup->midPoint = pMidPage;
+  if(pCache->)
 
   return pPage;
 }
@@ -1251,10 +1257,13 @@ static void pcache1Destroy(sqlite3_pcache *p){
 static void pcache1RemoveLru(sqlite3_pcache_page *pPg){
   PgHdr1 *pPage = (PgHdr1 *)pPg;
   PCache1 *pCache;
+  PGroup1 *pGroup;
 
   assert( pPage!=0 );
   assert( pPage->isPinned==0 );
   pCache = pPage->pCache;
+  pGroup = pCache->pGroup;
+
   //assert( pPage->pLruNext );
   //assert( pPage->pLruPrev );
   assert( sqlite3_mutex_held(pCache->pGroup->mutex) );
@@ -1262,8 +1271,38 @@ static void pcache1RemoveLru(sqlite3_pcache_page *pPg){
     pPage->pLruPrev->pLruNext = pPage->pLruNext;
     pPage->pLruNext->pLruPrev = pPage->pLruPrev;
   }
+
+  PgHdr1 *searchPoint = pPage;
+  int     isLeft = 0;
+  while(searchPoint != &pGroup->lru || searchPoint != pGroup->midPoint ){
+    searchPoint = searchPoint->pLruPrev;
+  }
+  if (searchPoint == &pGroup->lru){
+    isLeft = 1;
+  }else if (searchPoin == pGroup->midPoint){
+    isLeft = 0;
+  }
+  if (isLeft==1){
+    if (pCache->nCleanPage <= 3){
+      pGroup->midPoint = pGroup->lru.pLruPrev;
+    }else if (pCache->nCleanPage % 2 == 0){
+      pGroup->midPoint = pGroup->midPoint->pLruNext;
+    }
+  }else{
+    if (pCache->nCleanPage <= 3){
+      pGroup->midPoint = pGroup->lru.pLruPrev;
+    }else if (pCache->nCleanPage % 2 ==0){
+      if(pGroup->midPoint == pPage){
+	pGroup->midPoint = pGroup->midPoint->pLruNext;
+      }
+    }else if (pCache->nCleanPage % 2 ==1){
+      pGroup->midPoint = pGroup->midPoint->pLruPrev;
+    }
+  }
+
   pPage->pLruNext = 0;
   pPage->pLruPrev = 0;
+  pCache->nCleanPage--;
   assert( pPage->isAnchor==0 );
   assert( pCache->pGroup->lru.isAnchor==1 );
   //pCache->nRecyclable--; //TODO - JAEHUN check it has to have already shrinked at the time of pinned.
