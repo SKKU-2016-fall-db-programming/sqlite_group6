@@ -973,7 +973,6 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
   //int count = 0;
   //while( pMidPage && (count == pCache->nRecyclable/2+1) ){ pMidPage = pMidPage->pNext; count++;}
   //pGroup->midPoint = pMidPage;
-  if(pCache->)
 
   return pPage;
 }
