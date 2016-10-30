@@ -140,7 +140,7 @@ struct PGroup {
   PgHdr1 lru;                    /* The beginning and end of the LRU list */
 
   //FIXME JAEHUN - ADD midpoint and flag for whether move to next or prev PgHdr1 midpoint
-  PgHdr1 midPoint;
+  PgHdr1 *midPoint;
   u8	 nextMove;
 };
 
@@ -777,7 +777,7 @@ static sqlite3_pcache *pcache1Create(int szPage, int szExtra, int bPurgeable){
       pGroup->lru.isAnchor = 1;
       pGroup->lru.pLruPrev = pGroup->lru.pLruNext = &pGroup->lru;
       //FIXME JAEHUN - midPoint point at same reference as pGroup at first. And nextMove flag is 0 at first. I don't know where the variables initiate.
-      pGroup->midPoint = pGroup->lru;
+      pGroup->midPoint = &(pGroup->lru);
       pGroup->nextMove = 0;
     }
     pCache->pGroup = pGroup;
