@@ -141,7 +141,6 @@ struct PGroup {
 
   //FIXME JAEHUN - ADD midpoint and flag for whether move to next or prev PgHdr1 midpoint
   PgHdr1 *midPoint;
-  u8	 nextMove;
 };
 
 /* Each page cache is an instance of the following object.  Every
@@ -607,6 +606,13 @@ static void pcache1RemoveFromHash(PgHdr1 *pPage, int freeFlag){
 
   pCache->nPage--;
   if( freeFlag ) pcache1FreePage(pPage);
+
+  //FIXME - JAEHUN - After remove PgHdr1, if the nPage is smaller than a half of nMax, midPoint must go to lru pointer not to midPointInsertion working.
+  if( pCache->nPage < pCache->nMax/2 ){
+    if( pGroup->midPoint != &(pGroup->lru) ){
+      pGroup->midPoint = &(pGroup->lru);
+    }
+  }
 }
 
 /*
@@ -776,9 +782,8 @@ static sqlite3_pcache *pcache1Create(int szPage, int szExtra, int bPurgeable){
     if( pGroup->lru.isAnchor==0 ){
       pGroup->lru.isAnchor = 1;
       pGroup->lru.pLruPrev = pGroup->lru.pLruNext = &pGroup->lru;
-      //FIXME JAEHUN - midPoint point at same reference as pGroup at first. And nextMove flag is 0 at first. I don't know where the variables initiate.
+      //FIXME JAEHUN - midPoint point at same reference as pGroup at first.
       pGroup->midPoint = &(pGroup->lru);
-      pGroup->nextMove = 0;
     }
     pCache->pGroup = pGroup;
     pCache->szPage = szPage;
@@ -913,15 +918,30 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
   }
 
   if( pPage ){
-      //TODO  similar with unpin work. Have to consider midpoint.
+      //TODO Have to consider midpoint.
+    if( pCache->nPage < pCache->nMax/2 ){
+      if( pGroup->midPoint != &(pGroup->lru) ){
+	pGroup->midPoint = &(pGroup->lru);
+      }
+    }else{
+      if( pGroup->midPoint == &(pGroup->lru) ){
+        pGroup->midPoint = pGroup->lru.pLruPrev;
+      }
+    }
     unsigned int h = iKey % pCache->nHash;
     pCache->nPage++;
     pPage->iKey = iKey;
     pPage->pNext = pCache->apHash[h];
     pPage->pCache = pCache;
-    pPage->pLruPrev = 0;
-    pPage->pLruNext = 0;
+
+    PgHdr1 **ppNext = &pGroup->midPoint->pLruNext;
+    pPage->pLruPrev = pGroup->midPoint;
+    (pPage->pLruNext = *ppNext)->pLruPrev = pPage;
+    *ppNext = pPage;
+
     pPage->isPinned = 1;
+    pPage->touchCount = 1;
+
     *(void **)pPage->page.pExtra = 0;
     pCache->apHash[h] = pPage;
     if( iKey>pCache->iMaxKey ){
@@ -1095,17 +1115,18 @@ static void pcache1Unpin(
   /* It is an error to call this function if the page is already 
   ** part of the PGroup LRU list.
   */
-  assert( pPage->pLruPrev==0 && pPage->pLruNext==0 );
+  //assert( pPage->pLruPrev==0 && pPage->pLruNext==0 );
   assert( pPage->isPinned==1 );
 
   if( reuseUnlikely || pGroup->nCurrentPage>pGroup->nMaxPage ){
+    pcache1PinPage(pPage);
     pcache1RemoveFromHash(pPage, 1);
   }else{
     /* Add the page to the PGroup LRU list. */
-    PgHdr1 **ppFirst = &pGroup->lru.pLruNext;
+    /*PgHdr1 **ppFirst = &pGroup->lru.pLruNext;
     pPage->pLruPrev = &pGroup->lru;
     (pPage->pLruNext = *ppFirst)->pLruPrev = pPage;
-    *ppFirst = pPage;
+    *ppFirst = pPage;*/
     pCache->nRecyclable++;
     pPage->isPinned = 0;
   }
