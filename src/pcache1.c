@@ -1008,7 +1008,19 @@ static PgHdr1 *pcache1FetchNoMutex(
   ** subsequent steps to try to create the page. */
   if( pPage ){  //TODO Here is Hit section. We should change here.
     if( !pPage->isPinned ){
-      return pcache1PinPage(pPage);
+      PCache1 *pCache;
+      assert( pPage!=0 );
+      assert( pPage->isPinned==0 );
+      pCache = pPage->pCache;
+      assert( pPage->pLruNext );
+      assert( pPage->pLruPrev );
+      assert( sqlite3_mutex_held(pCache->pGroup->mutex) );
+      pPage->isPinned = 1;
+      pPage->touchCount++;
+      assert( pPage->isAnchor==0 );
+      assert( pCache->pGroup->lru.isAnchor==1 );
+      pCache->nRecyclable--;
+      return pPage;
     }else{
       //FIXME TAEHYUNG - increase just touchcount value
       pPage->touchCount++;
