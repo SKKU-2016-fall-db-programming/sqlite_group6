@@ -887,21 +887,40 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
   assert( pCache->nHash>0 && pCache->apHash );
 
   /* Step 4. Try to recycle a page. */
-  if( pCache->bPurgeable
+  if( pCache->bPurgeable && createFlag == 2
    && !pGroup->lru.pLruPrev->isAnchor
    && ((pCache->nPage+1>=pCache->nMax) || pcache1UnderMemoryPressure(pCache))
   ){
     PCache1 *pOther;
     pPage = pGroup->lru.pLruPrev;
-    assert( pPage->isPinned==0 );
-    pcache1RemoveFromHash(pPage, 0);
-    pcache1PinPage(pPage);
-    pOther = pPage->pCache;
-    if( pOther->szAlloc != pCache->szAlloc ){
-      pcache1FreePage(pPage);
-      pPage = 0;
-    }else{
-      pGroup->nCurrentPage -= (pOther->bPurgeable - pCache->bPurgeable);
+    while( pPage != &pGroup->lru ){ // need to one more check
+        if( pPage->isPinned == 1 && pPage->touchCount < 2){
+            pPage = pPage->pLruPrev;
+        }
+        else if(pPage->touchCount < 2 ){
+            assert( pPage->isPinned==0 );
+            pcache1RemoveFromHash(pPage, 0);
+            pcache1PinPage(pPage);
+            pOther = pPage->pCache;
+            if( pOther->szAlloc != pCache->szAlloc ){
+                pcache1FreePage(pPage);
+                pPage = 0;
+            }else{
+                pGroup->nCurrentPage -= (pOther->bPurgeable - pCache->bPurgeable);
+            }
+            break;
+        }
+        else{ // cold region to hot region
+            pPage->pLruPrev->pLruNext = pPage->pLruNext;
+            pPage->pLruNext->pLruPrev = pPage->pLruPrev;
+            pPage->touchCount = 0;
+            pPage->pLruPrev = &pGroup->lru;
+            pPage->pLruNext = pGroup->lru.pLruNext;
+            pGroup->lru.pLruNext->pLruPrev = pPage;
+            pGroup->lru.pLruNext = pPage;
+            
+            pGroup->midPoint = pGroup->midPoint->pLruPrev; //change mid-point
+        }
     }
   }
 
@@ -1095,18 +1114,20 @@ static void pcache1Unpin(
   /* It is an error to call this function if the page is already 
   ** part of the PGroup LRU list.
   */
-  assert( pPage->pLruPrev==0 && pPage->pLruNext==0 );
+  // assert( pPage->pLruPrev==0 && pPage->pLruNext==0 );
   assert( pPage->isPinned==1 );
 
   if( reuseUnlikely || pGroup->nCurrentPage>pGroup->nMaxPage ){
+    pcache1PinPage(pPage);
     pcache1RemoveFromHash(pPage, 1);
   }else{
     /* Add the page to the PGroup LRU list. */
+    /*
     PgHdr1 **ppFirst = &pGroup->lru.pLruNext;
     pPage->pLruPrev = &pGroup->lru;
     (pPage->pLruNext = *ppFirst)->pLruPrev = pPage;
     *ppFirst = pPage;
-    pCache->nRecyclable++;
+    pCache->nRecyclable++; */
     pPage->isPinned = 0;
   }
 
