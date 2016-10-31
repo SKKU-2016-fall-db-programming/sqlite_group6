@@ -1060,6 +1060,12 @@ static PgHdr1 *pcache1FetchNoMutex(
   ** Otherwise (page not in hash and createFlag!=0) continue with
   ** subsequent steps to try to create the page. */
   if( pPage ){  //TODO Here is Hit section. We should change here.
+
+    //FIXME - JAEHUN - If this Function get a Page in this routine, then it means hit. Therefore, to inform this situation, Make PCache's isHit variable 1.
+    PgHdr *hitPage = (PgHdr *)(pPage->page.pExtra);
+    PCache *hitCache = hitPage->pCache;
+    hitCache->isHit = 1;
+
     if( !pPage->isPinned ){
       PCache1 *pCache;
       assert( pPage!=0 );

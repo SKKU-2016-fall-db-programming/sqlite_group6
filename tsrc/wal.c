@@ -248,7 +248,7 @@
 ** Trace output macros
 */
 //if defined(SQLITE_TEST) && defined(SQLITE_DEBUG)
-#if defined(SQLITE_DEBUG)
+#if defined(SQLITE_TEST) && defined(SQLITE_DEBUG)
 int sqlite3WalTrace = 1;
 # define WALTRACE(X)  if(sqlite3WalTrace) sqlite3DebugPrintf X
 #else
@@ -769,7 +769,7 @@ static int walDecodeFrame(
 }
 
 
-#if defined(SQLITE_DEBUG)
+#if defined(SQLITE_TEST) && defined(SQLITE_DEBUG)
 /*
 ** Names of locks.  This routine is used to provide debugging output and is not
 ** a part of an ordinary build.
@@ -2976,7 +2976,7 @@ int sqlite3WalFrames(
   ** nTruncate==0 then this frame set does not complete the transaction. */
   assert( (isCommit!=0)==(nTruncate!=0) );
 
-#if defined(SQLITE_DEBUG)
+#if defined(SQLITE_TEST) && defined(SQLITE_DEBUG)
   { int cnt; for(cnt=0, p=pList; p; p=p->pDirty, cnt++){}
     WALTRACE(("WAL%p: frame write begin. %d frames. mxFrame=%d. %s\n",
               pWal, cnt, pWal->hdr.mxFrame, isCommit ? "Commit" : "Spill"));

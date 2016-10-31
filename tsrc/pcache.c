@@ -51,6 +51,9 @@ struct PCache {
   int (*xStress)(void*,PgHdr*);       /* Call to try make a page clean */
   void *pStress;                      /* Argument to xStress */
   sqlite3_pcache *pCache;             /* Pluggable cache module */
+
+  //FIXME - JAEHUN - isHit inform whether Pcache search is hit or not in every PagerGet.
+  int isHit;
 };
 
 /********************************** Test and Debug Logic **********************/

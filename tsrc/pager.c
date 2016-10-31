@@ -112,7 +112,7 @@
 /*
 ** Macros for troubleshooting.  Normally turned off
 */
-#if 1
+#if 0
 int sqlite3PagerTrace=1;  /* True to enable tracing */
 #define sqlite3DebugPrintf printf
 #define PAGERTRACE(X)     if( sqlite3PagerTrace ){ sqlite3DebugPrintf X; }
@@ -428,6 +428,9 @@ int sqlite3PagerTrace=1;  /* True to enable tracing */
 */
 #define MAX_SECTOR_SIZE 0x10000
 
+//FIXME - JAEHUN - Variables for calculate hit/miss ratio.
+u64 totalCall=0;
+u64 hitCall=0;
 
 /*
 ** An instance of the following structure is allocated for each active
@@ -5353,6 +5356,9 @@ int sqlite3PagerGet(
       if( rc!=SQLITE_OK ) goto pager_acquire_err;
     }
 
+    //FIXME - JAEHUN - If sqlite3PagerGet is called, it means page access is called. Therefore, totalCall is the num of PagerGet calls.
+    totalCall += 1;
+
     if( bMmapOk && iFrame==0 ){
       void *pData = 0;
 
@@ -5382,7 +5388,16 @@ int sqlite3PagerGet(
 
     {
       sqlite3_pcache_page *pBase;
+
+      //FIXME - JAEHUN - If PcacheFetch function get a Page that already in PCache, after the function, isHit variable is 1.
+      pPager->pPCache->isHit = 0;
       pBase = sqlite3PcacheFetch(pPager->pPCache, pgno, 3);
+      if(pPager->pPCache->isHit == 1){
+        hitCall += 1;
+        if (totalCall % 200000 == 0){
+          printf("\n\ntotalCall: %llu, hitCall: %llu, hit-ratio: %.4f%\n\n",totalCall, hitCall, ((float)hitCall/((float)totalCall))*100 );
+        }
+      }
       if( pBase==0 ){
         rc = sqlite3PcacheFetchStress(pPager->pPCache, pgno, &pBase);
         if( rc!=SQLITE_OK ) goto pager_acquire_err;
