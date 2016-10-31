@@ -1107,8 +1107,8 @@ configure:10285: $? = 0
 configure:10285: result: yes
 configure:10285: checking for localtime_s
 configure:10285: gcc -o conftest -g -O2   conftest.c  >&5
-/tmp/ccFLHy5R.o: In function `main':
-/home/jeff/others/sqlite/conftest.c:74: undefined reference to `localtime_s'
+/tmp/ccOyI38Q.o: In function `main':
+/home/jeff/others/hw3_sqlite3/conftest.c:74: undefined reference to `localtime_s'
 collect2: error: ld returned 1 exit status
 configure:10285: $? = 1
 configure: failed program was:
@@ -1232,8 +1232,8 @@ configure:10459: checking whether to support threadsafe operation
 configure:10467: result: yes
 configure:10473: checking for library containing pthread_create
 configure:10504: gcc -o conftest -g -O2   conftest.c  >&5
-/tmp/ccXfEYDw.o: In function `main':
-/home/jeff/others/sqlite/conftest.c:59: undefined reference to `pthread_create'
+/tmp/cctE8A6j.o: In function `main':
+/home/jeff/others/hw3_sqlite3/conftest.c:59: undefined reference to `pthread_create'
 collect2: error: ld returned 1 exit status
 configure:10504: $? = 1
 configure: failed program was:
@@ -1318,8 +1318,8 @@ configure:10838: WARNING: *** Without Tcl the regression tests cannot be execute
 configure:10840: WARNING: *** Consider using --with-tcl=... to define location of Tcl ***
 configure:10934: checking for library containing readline
 configure:10965: gcc -o conftest -g -O2 -DSQLITE_OS_UNIX=1   conftest.c  >&5
-/tmp/ccI5KswE.o: In function `main':
-/home/jeff/others/sqlite/conftest.c:59: undefined reference to `readline'
+/tmp/cchNhHaz.o: In function `main':
+/home/jeff/others/hw3_sqlite3/conftest.c:59: undefined reference to `readline'
 collect2: error: ld returned 1 exit status
 configure:10965: $? = 1
 configure: failed program was:
@@ -1455,8 +1455,8 @@ configure: failed program was:
 configure:10982: result: no
 configure:11009: checking for library containing tgetent
 configure:11040: gcc -o conftest -g -O2 -DSQLITE_OS_UNIX=1   conftest.c  >&5
-/tmp/cc4FJtxL.o: In function `main':
-/home/jeff/others/sqlite/conftest.c:59: undefined reference to `tgetent'
+/tmp/ccfx1KJH.o: In function `main':
+/home/jeff/others/hw3_sqlite3/conftest.c:59: undefined reference to `tgetent'
 collect2: error: ld returned 1 exit status
 configure:11040: $? = 1
 configure: failed program was:
@@ -1523,8 +1523,8 @@ configure: failed program was:
 |   return 0;
 | }
 configure:11040: gcc -o conftest -g -O2 -DSQLITE_OS_UNIX=1   conftest.c -lreadline   >&5
-/tmp/ccgjk9uO.o: In function `main':
-/home/jeff/others/sqlite/conftest.c:59: undefined reference to `tgetent'
+/tmp/cchEOrCJ.o: In function `main':
+/home/jeff/others/hw3_sqlite3/conftest.c:59: undefined reference to `tgetent'
 collect2: error: ld returned 1 exit status
 configure:11040: $? = 1
 configure: failed program was:
@@ -1756,8 +1756,8 @@ configure:11219: $? = 0
 configure:11236: result: none required
 configure:11286: checking for library containing dlopen
 configure:11317: gcc -o conftest -g -O2 -DSQLITE_OS_UNIX=1   conftest.c -lpthread  >&5
-/tmp/ccseYJzc.o: In function `main':
-/home/jeff/others/sqlite/conftest.c:59: undefined reference to `dlopen'
+/tmp/ccXyxLva.o: In function `main':
+/home/jeff/others/hw3_sqlite3/conftest.c:59: undefined reference to `dlopen'
 collect2: error: ld returned 1 exit status
 configure:11317: $? = 1
 configure: failed program was:
@@ -1850,6 +1850,7 @@ on jeff-server
 config.status:1086: creating Makefile
 config.status:1086: creating sqlite3.pc
 config.status:1086: creating config.h
+config.status:1261: config.h is unchanged
 config.status:1275: executing libtool commands
 
 ## ---------------- ##

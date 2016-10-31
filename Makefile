@@ -1,5 +1,5 @@
 #!/usr/make
-####
+#
 # Makefile for SQLITE
 #
 # This makefile is suppose to be configured automatically using the
@@ -15,7 +15,7 @@
 # The toplevel directory of the source tree.  This is the directory
 # that contains this "Makefile.in" and the "configure.in" script.
 #
-TOP = /home/jeff/others/sqlite
+TOP = /home/jeff/others/hw3_sqlite3
 
 # C Compiler and options for use in building executables that
 # will run on the platform that is doing the build.
@@ -29,8 +29,7 @@ BCC = gcc  -g -O2
 # on the "make" command-line.  Ex:  "make CC=clang CFLAGS=-fsanitize=undefined"
 #
 CC = gcc
-CFLAGS =   -g -O0 -DSQLITE_OS_UNIX=1 -DSQLITE_ENABLE_IOTRACE=1 \
--DSQLITE_FORCE_OS_TRACE=1 -DSQLITE_DEBUG=1 -DSQLITE_DEBUG_OS_TRACE=1
+CFLAGS =   -g -O2 -DSQLITE_OS_UNIX=1
 TCC = ${CC} ${CFLAGS} -I. -I${TOP}/src -I${TOP}/ext/rtree -I${TOP}/ext/icu
 TCC += -I${TOP}/ext/fts3 -I${TOP}/ext/async -I${TOP}/ext/session
 

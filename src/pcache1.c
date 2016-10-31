@@ -597,6 +597,7 @@ static PgHdr1 *pcache1PinPage(PgHdr1 *pPage){
 static void pcache1RemoveFromHash(PgHdr1 *pPage, int freeFlag){
   unsigned int h;
   PCache1 *pCache = pPage->pCache;
+  PGroup *pGroup = pCache->pGroup;
   PgHdr1 **pp;
 
   assert( sqlite3_mutex_held(pCache->pGroup->mutex) );
@@ -609,8 +610,8 @@ static void pcache1RemoveFromHash(PgHdr1 *pPage, int freeFlag){
 
   //FIXME - JAEHUN - After remove PgHdr1, if the nPage is smaller than a half of nMax, midPoint must go to lru pointer not to midPointInsertion working.
   if( pCache->nPage < pCache->nMax/2 ){
-    if( pGroup->midPoint != &(pGroup->lru) ){
-      pGroup->midPoint = &(pGroup->lru);
+    if( pGroup->midPoint != &pGroup->lru ){
+      pGroup->midPoint = &pGroup->lru;
     }
   }
 }
@@ -783,7 +784,7 @@ static sqlite3_pcache *pcache1Create(int szPage, int szExtra, int bPurgeable){
       pGroup->lru.isAnchor = 1;
       pGroup->lru.pLruPrev = pGroup->lru.pLruNext = &pGroup->lru;
       //FIXME JAEHUN - midPoint point at same reference as pGroup at first.
-      pGroup->midPoint = &(pGroup->lru);
+      pGroup->midPoint = &pGroup->lru;
     }
     pCache->pGroup = pGroup;
     pCache->szPage = szPage;
@@ -897,12 +898,20 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
    && ((pCache->nPage+1>=pCache->nMax) || pcache1UnderMemoryPressure(pCache))
   ){
     PCache1 *pOther;
+    int hotRegion = 0;
     pPage = pGroup->lru.pLruPrev;
     while( pPage != &pGroup->lru ){ // need to one more check
+        if( pPage == pGroup->midPoint ){
+	  hotRegion = 1;
+   	}
+
         if( pPage->isPinned == 1 && pPage->touchCount < 2){
             pPage = pPage->pLruPrev;
         }
         else if(pPage->touchCount < 2 ){
+	    if( hotRegion ){
+	      pGroup->midPoint = pGroup->midPoint->pLruNext;
+	    }
             assert( pPage->isPinned==0 );
             pcache1RemoveFromHash(pPage, 0);
             pcache1PinPage(pPage);
@@ -916,6 +925,7 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
             break;
         }
         else{ // cold region to hot region
+	    PgHdr1 *pPrevPage = pPage->pLruPrev;
             pPage->pLruPrev->pLruNext = pPage->pLruNext;
             pPage->pLruNext->pLruPrev = pPage->pLruPrev;
             pPage->touchCount = 0;
@@ -924,7 +934,10 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
             pGroup->lru.pLruNext->pLruPrev = pPage;
             pGroup->lru.pLruNext = pPage;
             
+	    pGroup->midPoint->touchCount = 1;
             pGroup->midPoint = pGroup->midPoint->pLruPrev; //change mid-point
+
+	    pPage = pPrevPage;
         }
     }
   }
@@ -937,21 +950,22 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
   }
 
   if( pPage ){
+    unsigned int h = iKey % pCache->nHash;
+    pCache->nPage++;
+    pPage->iKey = iKey;
+    pPage->pNext = pCache->apHash[h];
+    pPage->pCache = pCache;
+
       //TODO Have to consider midpoint.
     if( pCache->nPage < pCache->nMax/2 ){
       if( pGroup->midPoint != &(pGroup->lru) ){
-	pGroup->midPoint = &(pGroup->lru);
+        pGroup->midPoint = &(pGroup->lru);
       }
     }else{
       if( pGroup->midPoint == &(pGroup->lru) ){
         pGroup->midPoint = pGroup->lru.pLruPrev;
       }
     }
-    unsigned int h = iKey % pCache->nHash;
-    pCache->nPage++;
-    pPage->iKey = iKey;
-    pPage->pNext = pCache->apHash[h];
-    pPage->pCache = pCache;
 
     PgHdr1 **ppNext = &pGroup->midPoint->pLruNext;
     pPage->pLruPrev = pGroup->midPoint;

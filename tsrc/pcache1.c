@@ -99,6 +99,10 @@ struct PgHdr1 {
   u8 isPinned;                   /* Page in use, not on the LRU list */
   u8 isBulkLocal;                /* This page from bulk local storage */
   u8 isAnchor;                   /* This is the PGroup.lru element */
+
+  //FIXME JAEHUN - u32 is 4-bytes unsigned integer. touchCount is for touch count of midpoint-insertion and touch count algorithm.
+  u32 touchCount;
+
   PgHdr1 *pNext;                 /* Next in hash table chain */
   PCache1 *pCache;               /* Cache that currently owns this page */
   PgHdr1 *pLruNext;              /* Next in LRU list of unpinned pages */
@@ -134,6 +138,9 @@ struct PGroup {
   unsigned int mxPinned;         /* nMaxpage + 10 - nMinPage */
   unsigned int nCurrentPage;     /* Number of purgeable pages allocated */
   PgHdr1 lru;                    /* The beginning and end of the LRU list */
+
+  //FIXME JAEHUN - ADD midpoint and flag for whether move to next or prev PgHdr1 midpoint
+  PgHdr1 *midPoint;
 };
 
 /* Each page cache is an instance of the following object.  Every
@@ -437,6 +444,8 @@ static PgHdr1 *pcache1AllocPage(PCache1 *pCache, int benignMalloc){
     p->page.pExtra = &p[1];
     p->isBulkLocal = 0;
     p->isAnchor = 0;
+    //FIXME JAEHUN - ADD touchCount setup as 0 at first.
+    p->touchCount = 0;
   }
   if( pCache->bPurgeable ){
     pCache->pGroup->nCurrentPage++;
@@ -588,6 +597,7 @@ static PgHdr1 *pcache1PinPage(PgHdr1 *pPage){
 static void pcache1RemoveFromHash(PgHdr1 *pPage, int freeFlag){
   unsigned int h;
   PCache1 *pCache = pPage->pCache;
+  PGroup *pGroup = pCache->pGroup;
   PgHdr1 **pp;
 
   assert( sqlite3_mutex_held(pCache->pGroup->mutex) );
@@ -597,6 +607,13 @@ static void pcache1RemoveFromHash(PgHdr1 *pPage, int freeFlag){
 
   pCache->nPage--;
   if( freeFlag ) pcache1FreePage(pPage);
+
+  //FIXME - JAEHUN - After remove PgHdr1, if the nPage is smaller than a half of nMax, midPoint must go to lru pointer not to midPointInsertion working.
+  if( pCache->nPage < pCache->nMax/2 ){
+    if( pGroup->midPoint != &pGroup->lru ){
+      pGroup->midPoint = &pGroup->lru;
+    }
+  }
 }
 
 /*
@@ -766,6 +783,8 @@ static sqlite3_pcache *pcache1Create(int szPage, int szExtra, int bPurgeable){
     if( pGroup->lru.isAnchor==0 ){
       pGroup->lru.isAnchor = 1;
       pGroup->lru.pLruPrev = pGroup->lru.pLruNext = &pGroup->lru;
+      //FIXME JAEHUN - midPoint point at same reference as pGroup at first.
+      pGroup->midPoint = &pGroup->lru;
     }
     pCache->pGroup = pGroup;
     pCache->szPage = szPage;
@@ -857,6 +876,7 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
   PgHdr1 *pPage = 0;
 
   /* Step 3: Abort if createFlag is 1 but the cache is nearly full */
+  //TODO nPinned is not pCache->nPage - pCache->nRecyclable
   assert( pCache->nPage >= pCache->nRecyclable );
   nPinned = pCache->nPage - pCache->nRecyclable;
   assert( pGroup->mxPinned == pGroup->nMaxPage + 10 - pGroup->nMinPage );
@@ -873,21 +893,52 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
   assert( pCache->nHash>0 && pCache->apHash );
 
   /* Step 4. Try to recycle a page. */
-  if( pCache->bPurgeable
+  if( pCache->bPurgeable && createFlag == 2
    && !pGroup->lru.pLruPrev->isAnchor
    && ((pCache->nPage+1>=pCache->nMax) || pcache1UnderMemoryPressure(pCache))
   ){
     PCache1 *pOther;
+    int hotRegion = 0;
     pPage = pGroup->lru.pLruPrev;
-    assert( pPage->isPinned==0 );
-    pcache1RemoveFromHash(pPage, 0);
-    pcache1PinPage(pPage);
-    pOther = pPage->pCache;
-    if( pOther->szAlloc != pCache->szAlloc ){
-      pcache1FreePage(pPage);
-      pPage = 0;
-    }else{
-      pGroup->nCurrentPage -= (pOther->bPurgeable - pCache->bPurgeable);
+    while( pPage != &pGroup->lru ){ // need to one more check
+        if( pPage == pGroup->midPoint ){
+	  hotRegion = 1;
+   	}
+
+        if( pPage->isPinned == 1 && pPage->touchCount < 2){
+            pPage = pPage->pLruPrev;
+        }
+        else if(pPage->touchCount < 2 ){
+	    if( hotRegion ){
+	      pGroup->midPoint = pGroup->midPoint->pLruNext;
+	    }
+            assert( pPage->isPinned==0 );
+            pcache1RemoveFromHash(pPage, 0);
+            pcache1PinPage(pPage);
+            pOther = pPage->pCache;
+            if( pOther->szAlloc != pCache->szAlloc ){
+                pcache1FreePage(pPage);
+                pPage = 0;
+            }else{
+                pGroup->nCurrentPage -= (pOther->bPurgeable - pCache->bPurgeable);
+            }
+            break;
+        }
+        else{ // cold region to hot region
+	    PgHdr1 *pPrevPage = pPage->pLruPrev;
+            pPage->pLruPrev->pLruNext = pPage->pLruNext;
+            pPage->pLruNext->pLruPrev = pPage->pLruPrev;
+            pPage->touchCount = 0;
+            pPage->pLruPrev = &pGroup->lru;
+            pPage->pLruNext = pGroup->lru.pLruNext;
+            pGroup->lru.pLruNext->pLruPrev = pPage;
+            pGroup->lru.pLruNext = pPage;
+            
+	    pGroup->midPoint->touchCount = 1;
+            pGroup->midPoint = pGroup->midPoint->pLruPrev; //change mid-point
+
+	    pPage = pPrevPage;
+        }
     }
   }
 
@@ -904,9 +955,26 @@ static SQLITE_NOINLINE PgHdr1 *pcache1FetchStage2(
     pPage->iKey = iKey;
     pPage->pNext = pCache->apHash[h];
     pPage->pCache = pCache;
-    pPage->pLruPrev = 0;
-    pPage->pLruNext = 0;
+
+      //TODO Have to consider midpoint.
+    if( pCache->nPage < pCache->nMax/2 ){
+      if( pGroup->midPoint != &(pGroup->lru) ){
+        pGroup->midPoint = &(pGroup->lru);
+      }
+    }else{
+      if( pGroup->midPoint == &(pGroup->lru) ){
+        pGroup->midPoint = pGroup->lru.pLruPrev;
+      }
+    }
+
+    PgHdr1 **ppNext = &pGroup->midPoint->pLruNext;
+    pPage->pLruPrev = pGroup->midPoint;
+    (pPage->pLruNext = *ppNext)->pLruPrev = pPage;
+    *ppNext = pPage;
+
     pPage->isPinned = 1;
+    pPage->touchCount = 1;
+
     *(void **)pPage->page.pExtra = 0;
     pCache->apHash[h] = pPage;
     if( iKey>pCache->iMaxKey ){
@@ -991,10 +1059,24 @@ static PgHdr1 *pcache1FetchNoMutex(
   ** If the page was not in the hash table and createFlag is 0, abort.
   ** Otherwise (page not in hash and createFlag!=0) continue with
   ** subsequent steps to try to create the page. */
-  if( pPage ){
+  if( pPage ){  //TODO Here is Hit section. We should change here.
     if( !pPage->isPinned ){
-      return pcache1PinPage(pPage);
+      PCache1 *pCache;
+      assert( pPage!=0 );
+      assert( pPage->isPinned==0 );
+      pCache = pPage->pCache;
+      assert( pPage->pLruNext );
+      assert( pPage->pLruPrev );
+      assert( sqlite3_mutex_held(pCache->pGroup->mutex) );
+      pPage->isPinned = 1;
+      pPage->touchCount++;
+      assert( pPage->isAnchor==0 );
+      assert( pCache->pGroup->lru.isAnchor==1 );
+      pCache->nRecyclable--;
+      return pPage;
     }else{
+      //FIXME TAEHYUNG - increase just touchcount value
+      pPage->touchCount++;
       return pPage;
     }
   }else if( createFlag ){
@@ -1066,17 +1148,18 @@ static void pcache1Unpin(
   /* It is an error to call this function if the page is already 
   ** part of the PGroup LRU list.
   */
-  assert( pPage->pLruPrev==0 && pPage->pLruNext==0 );
+  // assert( pPage->pLruPrev==0 && pPage->pLruNext==0 );
   assert( pPage->isPinned==1 );
 
   if( reuseUnlikely || pGroup->nCurrentPage>pGroup->nMaxPage ){
+    pcache1PinPage(pPage);
     pcache1RemoveFromHash(pPage, 1);
   }else{
     /* Add the page to the PGroup LRU list. */
-    PgHdr1 **ppFirst = &pGroup->lru.pLruNext;
+    /*PgHdr1 **ppFirst = &pGroup->lru.pLruNext;
     pPage->pLruPrev = &pGroup->lru;
     (pPage->pLruNext = *ppFirst)->pLruPrev = pPage;
-    *ppFirst = pPage;
+    *ppFirst = pPage;*/
     pCache->nRecyclable++;
     pPage->isPinned = 0;
   }
