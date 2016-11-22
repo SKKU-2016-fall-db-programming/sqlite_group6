@@ -428,12 +428,13 @@ int sqlite3PagerTrace=1;  /* True to enable tracing */
 */
 #define MAX_SECTOR_SIZE 0x10000
 
-//FIXME - JAEHUN - Variables for calculate hit/miss ratio.
+//FIXME - JAEHUN - Variables for calculate hit/miss ratio. PLUS log_seq_num
 u64 totalCall=0;
 u64 hitCall=0;
 
 extern void *pgLog_mmap;
 extern off_t pgLog_offset;
+extern u64 log_seq_num;
 
 /*
 ** An instance of the following structure is allocated for each active
@@ -5713,6 +5714,21 @@ int sqlite3PagerBegin(Pager *pPager, int exFlag, int subjInMemory){
     assert( assert_pager_state(pPager) );
   }
 
+  PageLog pageLog;
+
+  pageLog.lsn = log_seq_num;
+  pageLog.pgno = 0;
+  pageLog.opType = 4; // 4 - OP_BEGIN
+  pageLog.pageIndex = -1;
+  pageLog.oldSize = 0;
+  pageLog.newSize = 0;
+
+  memcpy(pgLog_mmap+log_seq_num, (void *)&pageLog, sizeof(pageLog));
+
+  fprintf(stdout,"BEGIN - logSize: %d, lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",(int)sizeof(pageLog), pageLog.lsn, pageLog.pgno, pageLog.opType, pageLog.pageIndex, pageLog.oldSize, pageLog.newSize);
+  
+  log_seq_num += sizeof(pageLog);
+
   PAGERTRACE(("TRANSACTION %d\n", PAGERID(pPager)));
   return rc;
 }
@@ -6382,6 +6398,8 @@ commit_phase_one_exit:
 int sqlite3PagerCommitPhaseTwo(Pager *pPager){
   int rc = SQLITE_OK;                  /* Return code */
 
+  PageLog pageLog;
+
   /* This routine should not be called if a prior error has occurred.
   ** But if (due to a coding error elsewhere in the system) it does get
   ** called, just return the same error code without doing anything. */
@@ -6412,6 +6430,19 @@ int sqlite3PagerCommitPhaseTwo(Pager *pPager){
     pPager->eState = PAGER_READER;
     return SQLITE_OK;
   }
+
+  pageLog.lsn = log_seq_num;
+  pageLog.pgno = 0;
+  pageLog.opType = 5; //5 - OP_COMMIT
+  pageLog.pageIndex = -1;
+  pageLog.oldSize = 0;
+  pageLog.newSize = 0;
+
+  memcpy(pgLog_mmap+log_seq_num, (void *)&pageLog, sizeof(pageLog));
+
+  fprintf(stdout,"COMMIT - logSize: %d, lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",(int)sizeof(pageLog), pageLog.lsn, pageLog.pgno, pageLog.opType, pageLog.pageIndex, pageLog.oldSize, pageLog.newSize);
+
+  log_seq_num += sizeof(pageLog);
 
   PAGERTRACE(("COMMIT %d\n", PAGERID(pPager)));
   pPager->iDataVersion++;

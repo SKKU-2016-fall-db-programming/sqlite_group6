@@ -1058,9 +1058,9 @@ struct PageLog {
 	u64 lsn;
 	u32 pgno;
 	int opType;
-	int offset;
-	int length;
-	//unsigned char *cellData;
+	int pageIndex;
+	int oldSize;
+	int newSize;
 };
 
 /*
