@@ -3826,7 +3826,8 @@ static void btreeEndTransaction(Btree *p){
 */
 int sqlite3BtreeCommitPhaseTwo(Btree *p, int bCleanup){
 if(log_count>=4 || pragma_check==1){
-  log_count=0;
+  if (log_count>=4){ log_count=0;}
+  if (pragma_check==1){pragma_check=0;}
   if( p->inTrans==TRANS_NONE ) return SQLITE_OK;
   sqlite3BtreeEnter(p);
   btreeIntegrity(p);

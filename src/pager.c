@@ -6444,6 +6444,11 @@ int sqlite3PagerCommitPhaseTwo(Pager *pPager){
 
   log_seq_num += sizeof(pageLog);
 
+  extern int pragma_check;
+  if(pragma_check!=1){
+    sqlite3PagerCheckpoint(pPager,0,0,0);
+  }
+
   PAGERTRACE(("COMMIT %d\n", PAGERID(pPager)));
   pPager->iDataVersion++;
   rc = pager_end_transaction(pPager, pPager->setMaster, 1);
