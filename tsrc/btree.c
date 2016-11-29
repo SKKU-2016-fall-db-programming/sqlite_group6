@@ -6330,6 +6330,7 @@ static void insertCell(
 
 
   assert( *pRC==SQLITE_OK );
+  fprintf(stderr,"assert~~~ idx: %d nCell: %d, nOverflow: %d \n",i,pPage->nCell,pPage->nOverflow);
   assert( i>=0 && i<=pPage->nCell+pPage->nOverflow );
   assert( MX_CELL(pPage->pBt)<=10921 );
   assert( pPage->nCell<=MX_CELL(pPage->pBt) || CORRUPT_DB );

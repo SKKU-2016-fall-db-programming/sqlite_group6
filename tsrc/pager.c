@@ -5344,10 +5344,12 @@ int sqlite3PagerGet(
   if( pgno<=1 && pgno==0 ){
     return SQLITE_CORRUPT_BKPT;
   }
+//  assert( pPager->eState>=PAGER_READER );
   assert( pPager->eState>=PAGER_READER );
   assert( assert_pager_state(pPager) );
   assert( noContent==0 || bMmapOk==0 );
 
+//  assert( pPager->hasHeldSharedLock==1 );
   assert( pPager->hasHeldSharedLock==1 );
 
   /* If the pager is in the error state, return an error immediately. 
@@ -5713,7 +5715,7 @@ int sqlite3PagerBegin(Pager *pPager, int exFlag, int subjInMemory){
     assert( rc!=SQLITE_OK || pPager->eState==PAGER_WRITER_LOCKED );
     assert( assert_pager_state(pPager) );
   }
-
+/*
   PageLog pageLog;
 
   pageLog.lsn = log_seq_num;
@@ -5728,7 +5730,7 @@ int sqlite3PagerBegin(Pager *pPager, int exFlag, int subjInMemory){
   fprintf(stdout,"BEGIN - logSize: %d, lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",(int)sizeof(pageLog), pageLog.lsn, pageLog.pgno, pageLog.opType, pageLog.pageIndex, pageLog.oldSize, pageLog.newSize);
   
   log_seq_num += sizeof(pageLog);
-
+*/
   PAGERTRACE(("TRANSACTION %d\n", PAGERID(pPager)));
   return rc;
 }
@@ -5801,10 +5803,18 @@ static int pager_write(PgHdr *pPg){
   ** been started. The journal file may or may not be open at this point.
   ** It is never called in the ERROR state.
   */
+
+/*
   assert( pPager->eState==PAGER_WRITER_LOCKED
        || pPager->eState==PAGER_WRITER_CACHEMOD
        || pPager->eState==PAGER_WRITER_DBMOD
   );
+*/
+  assert( pPager->eState==PAGER_WRITER_LOCKED
+       || pPager->eState==PAGER_WRITER_CACHEMOD
+       || pPager->eState==PAGER_WRITER_DBMOD
+  );
+
   assert( assert_pager_state(pPager) );
   assert( pPager->errCode==0 );
   assert( pPager->readOnly==0 );
@@ -5823,6 +5833,7 @@ static int pager_write(PgHdr *pPg){
     rc = pager_open_journal(pPager);
     if( rc!=SQLITE_OK ) return rc;
   }
+//  assert( pPager->eState>=PAGER_WRITER_CACHEMOD );
   assert( pPager->eState>=PAGER_WRITER_CACHEMOD );
   assert( assert_pager_state(pPager) );
 
@@ -5982,7 +5993,7 @@ static SQLITE_NOINLINE int pagerWriteLargeSector(PgHdr *pPg){
 int sqlite3PagerWrite(PgHdr *pPg){
   Pager *pPager = pPg->pPager;
   assert( (pPg->flags & PGHDR_MMAP)==0 );
-  assert( pPager->eState>=PAGER_WRITER_LOCKED );
+//  assert( pPager->eState>=PAGER_WRITER_LOCKED );
   assert( assert_pager_state(pPager) );
   if( pPager->errCode ){
     return pPager->errCode;

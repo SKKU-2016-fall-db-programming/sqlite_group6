@@ -15,7 +15,7 @@
 # The toplevel directory of the source tree.  This is the directory
 # that contains this "Makefile.in" and the "configure.in" script.
 #
-TOP = /home/jeff/others/pure_sqlite
+TOP = /home/jeff/others/pagelog_sqlite
 
 # C Compiler and options for use in building executables that
 # will run on the platform that is doing the build.
@@ -29,7 +29,7 @@ BCC = gcc  -g -O2
 # on the "make" command-line.  Ex:  "make CC=clang CFLAGS=-fsanitize=undefined"
 #
 CC = gcc
-CFLAGS =   -g -O0 -DSQLITE_OS_UNIX=1 -DSQLITE_DEBUG=1
+CFLAGS =   -g -O2 -DSQLITE_OS_UNIX=1
 TCC = ${CC} ${CFLAGS} -I. -I${TOP}/src -I${TOP}/ext/rtree -I${TOP}/ext/icu
 TCC += -I${TOP}/ext/fts3 -I${TOP}/ext/async -I${TOP}/ext/session
 
@@ -1070,7 +1070,6 @@ TESTFIXTURE_FLAGS += -DSQLITE_SERVER=1 -DSQLITE_PRIVATE="" -DSQLITE_CORE
 TESTFIXTURE_FLAGS += -DBUILD_sqlite
 TESTFIXTURE_FLAGS += -DSQLITE_SERIES_CONSTRAINT_VERIFY=1
 TESTFIXTURE_FLAGS += -DSQLITE_DEFAULT_PAGE_SIZE=1024
-TESTFIXTURE_FLAGS += -DSQLITE_DEFAULT_CACHE_SIZE=500
 
 TESTFIXTURE_SRC0 = $(TESTSRC2) libsqlite3.la
 TESTFIXTURE_SRC1 = sqlite3.c

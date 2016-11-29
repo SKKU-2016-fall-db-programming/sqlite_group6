@@ -2908,23 +2908,6 @@ static int openDatabase(
   sqlite3HashInit(&db->aModule);
 #endif
 
-  //FIXME - JAEHUN - open pgLogfile and mmap the file
-  pgLog_fd = open("./page_log",O_RDWR | O_CREAT, 0644);
-  if (pgLog_fd < 0) {
-    fprintf(stderr,"PAGE LOG FILE OPEN ERROR\n");
-    return -1;
-  }else {
-    ftruncate(pgLog_fd, 1024*1024);
-  }
-
-  pgLog_mmap = (void *) mmap(NULL, 1024*1024, PROT_READ|PROT_WRITE, MAP_SHARED, pgLog_fd, 0);
-
-  if (pgLog_mmap == MAP_FAILED) {
-    fprintf(stderr,"LOG FILE MMAPING ERROR\n");
-    return -1;
-  }
-  
-  memset(pgLog_mmap,0,1024*1024);
 
   /* Add the default collation sequence BINARY. BINARY works for both UTF-8
   ** and UTF-16, so add a version for each to avoid any unnecessary
@@ -2985,13 +2968,62 @@ static int openDatabase(
   if( db->mallocFailed ){
     goto opendb_out;
   }
+/*
+  //FIXME - JAEHUN - open pgLogfile and mmap the file
+  pgLog_fd = open("./page_log",O_RDWR | O_CREAT, 0644);
+  if (pgLog_fd < 0) {
+    fprintf(stderr,"PAGE LOG FILE OPEN ERROR\n");
+    return -1;
+  }else {
+    ftruncate(pgLog_fd, 1024*1024);
+  }
 
+  pgLog_mmap = (void *) mmap(NULL, 1024*1024, PROT_READ|PROT_WRITE, MAP_SHARED, pgLog_fd, 0);
+
+  if (pgLog_mmap == MAP_FAILED) {
+    fprintf(stderr,"LOG FILE MMAPING ERROR\n");
+    return -1;
+  }
+
+//  memset(pgLog_mmap,0,1024*1024);
+  PageLog *pLog=(PageLog *)pgLog_mmap;
+  
+  fprintf(stdout,"openDB - lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",pLog->lsn, pLog->pgno, pLog->opType, pLog->pageIndex, pLog->oldSize, pLog->newSize);
+
+  //FIXME - JAEHUN - Get MemPage with pgno by btreeGetPage()
+  MemPage **ppmemPage;
+
+  ppmemPage = (MemPage **)malloc(sizeof(MemPage *));
+
+  sqlite3BtreeEnter(db->aDb[0].pBt);
+  btreeIntegrity(db->aDb[0].pBt);
+
+  if (btreeGetPage(db->aDb[0].pBt->pBt,pLog->pgno,ppmemPage,0) == SQLITE_OK ) {
+    fprintf(stdout,"GetPage SUCCESS\n");
+    int rc;
+    insertCell(*ppmemPage,pLog->pageIndex,(char *)pgLog_mmap+sizeof(PageLog)+pLog->oldSize,pLog->newSize,0,0,&rc);
+    if(rc != SQLITE_OK){fprintf(stderr,"insertCell FAILED!!\n");}
+    else{fprintf(stdout,"insertCell SUCCESS!!\n");}
+  }else{
+    fprintf(stderr,"btreeGetPage FAILED!!UU\n");
+  }
+  
+  btreeIntegrity(db->aDb[0].pBt);
+  sqlite3BtreeLeave(db->aDb[0].pBt);
+*/
   /* Register all built-in functions, but do not attempt to read the
   ** database schema yet. This is delayed until the first time the database
   ** is accessed.
   */
   sqlite3Error(db, SQLITE_OK);
   sqlite3RegisterPerConnectionBuiltinFunctions(db);
+
+  char tmpsql[100]="create table test (no INTEGER)";
+  char tmpsql2[100]="select * from test";
+
+  sqlite3_exec(db,tmpsql,0,0,&zErrMsg);
+  sqlite3_exec(db,tmpsql2,0,0,&zErrMsg);
+
 
   /* Load automatic extensions - extensions that have been registered
   ** using the sqlite3_automatic_extension() API.
@@ -3004,6 +3036,50 @@ static int openDatabase(
       goto opendb_out;
     }
   }
+
+  //FIXME - JAEHUN - open pgLogfile and mmap the file
+  pgLog_fd = open("./page_log",O_RDWR | O_CREAT, 0644);
+  if (pgLog_fd < 0) {
+    fprintf(stderr,"PAGE LOG FILE OPEN ERROR\n");
+    return -1;
+  }else {
+    ftruncate(pgLog_fd, 1024*1024);
+  }
+
+  pgLog_mmap = (void *) mmap(NULL, 1024*1024, PROT_READ|PROT_WRITE, MAP_SHARED, pgLog_fd, 0);
+
+  if (pgLog_mmap == MAP_FAILED) {
+    fprintf(stderr,"LOG FILE MMAPING ERROR\n");
+    return -1;
+  }
+
+//  memset(pgLog_mmap,0,1024*1024);
+  PageLog *pLog=(PageLog *)pgLog_mmap;
+
+  fprintf(stdout,"openDB - lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",pLog->lsn, pLog->pgno, pLog->opType, pLog->pageIndex, pLog->oldSize, pLog->newSize);
+
+  //FIXME - JAEHUN - Get MemPage with pgno by btreeGetPage()
+  MemPage **ppmemPage;
+
+  ppmemPage = (MemPage **)malloc(sizeof(MemPage *));
+
+  sqlite3BtreeEnter(db->aDb[0].pBt);
+  btreeIntegrity(db->aDb[0].pBt);
+
+  if (btreeGetPage(db->aDb[0].pBt->pBt,pLog->pgno,ppmemPage,0) == SQLITE_OK ) {
+    fprintf(stdout,"GetPage SUCCESS\n");
+    fprintf(stdout,"nCell: %u, cellOffset: %u\n",(*ppmemPage)->nCell,(*ppmemPage)->cellOffset);
+    int rc;
+    insertCell(*ppmemPage,pLog->pageIndex,(char *)pgLog_mmap+sizeof(PageLog)+pLog->oldSize,pLog->newSize,0,0,&rc);
+    if(rc != SQLITE_OK){fprintf(stderr,"insertCell FAILED!!\n");}
+    else{fprintf(stdout,"insertCell SUCCESS!!\n");}
+  }else{
+    fprintf(stderr,"btreeGetPage FAILED!!UU\n");
+  }
+
+  btreeIntegrity(db->aDb[0].pBt);
+  sqlite3BtreeLeave(db->aDb[0].pBt);
+
 
 #ifdef SQLITE_ENABLE_FTS1
   if( !db->mallocFailed ){
@@ -3110,6 +3186,7 @@ opendb_out:
     }
   }
 #endif
+
   sqlite3_free(zOpen);
   return rc & 0xff;
 }
