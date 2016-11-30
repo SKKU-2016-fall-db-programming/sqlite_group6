@@ -3052,9 +3052,14 @@ static int openDatabase(
     fprintf(stderr,"LOG FILE MMAPING ERROR\n");
     return -1;
   }
-
+  while(1){ //FIXME TH
 //  memset(pgLog_mmap,0,1024*1024);
   PageLog *pLog=(PageLog *)pgLog_mmap;
+
+  if(pLog->pgno == 0){
+	fprintf(stdout,"Complete scan all logs in LOG FILE\n");
+	break;
+  }
 
   fprintf(stdout,"openDB - lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",pLog->lsn, pLog->pgno, pLog->opType, pLog->pageIndex, pLog->oldSize, pLog->newSize);
 
@@ -3080,6 +3085,9 @@ static int openDatabase(
   btreeIntegrity(db->aDb[0].pBt);
   sqlite3BtreeLeave(db->aDb[0].pBt);
 
+  pgLog_mmap = pgLog_mmap + sizeof(PageLog) + pLog->oldSize + pLog->newSize;
+
+  }
 
 #ifdef SQLITE_ENABLE_FTS1
   if( !db->mallocFailed ){
