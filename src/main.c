@@ -116,7 +116,7 @@ void *pgLog_mmap = NULL;
 u64 log_seq_num = 0;
 int log_count = 0;
 off_t pgLog_offset = 0;
-
+int is_split = 0;
 
 /*
 ** Initialize SQLite.  
@@ -3037,6 +3037,9 @@ static int openDatabase(
     }
   }
 
+  int f_ok;
+  f_ok = access("./page_log",F_OK);
+
   //FIXME - JAEHUN - open pgLogfile and mmap the file
   pgLog_fd = open("./page_log",O_RDWR | O_CREAT, 0644);
   if (pgLog_fd < 0) {
@@ -3071,9 +3074,9 @@ static int openDatabase(
 
   PageLog pageLog;
   //FIXME
-  while(1){
+  while(!f_ok){
     memcpy((void *)&pageLog, pgLog_mmap + log_seq_num, sizeof(pageLog));
-    fprintf(stdout,"lsn:%lu\t=> logSize: %d, lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",log_seq_num,(int)sizeof(pageLog), pageLog.lsn, pageLog.pgno, pageLog.opType, pageLog.pageIndex, pageLog.oldSize, pageLog.newSize);
+    //fprintf(stdout,"lsn:%lu\t=> logSize: %d, lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",log_seq_num,(int)sizeof(pageLog), pageLog.lsn, pageLog.pgno, pageLog.opType, pageLog.pageIndex, pageLog.oldSize, pageLog.newSize);
     
     if(pageLog.opType == 0){
       break;
@@ -3083,16 +3086,16 @@ static int openDatabase(
       last_begin_lsn = log_seq_num;
       log_seq_num += sizeof(pageLog);
       continue;
-    }else if(pageLog.opType == 1 || pageLog.opType == 2){ //INSERT || UPDATE
+    }else if(pageLog.opType == 1 || pageLog.opType == 2 || pageLog.opType == 3){ //INSERT || UPDATE
       log_seq_num += sizeof(pageLog)+pageLog.oldSize+pageLog.newSize;
     }else if(pageLog.opType == 5){ //COMMIT
       u64 between_lsn = last_begin_lsn + (u64)sizeof(pageLog);
       while(between_lsn < log_seq_num){ // begin <   < commit
         memcpy((void *)&pageLog, pgLog_mmap + between_lsn, sizeof(pageLog));
-        fprintf(stdout,"BETWEEN:lsn:%lu\t=> logSize: %d, lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",between_lsn,(int)sizeof(pageLog), pageLog.lsn, pageLog.pgno, pageLog.opType, pageLog.pageIndex, pageLog.oldSize, pageLog.newSize);
+        //fprintf(stdout,"BETWEEN:lsn:%lu\t=> logSize: %d, lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",between_lsn,(int)sizeof(pageLog), pageLog.lsn, pageLog.pgno, pageLog.opType, pageLog.pageIndex, pageLog.oldSize, pageLog.newSize);
         if (btreeGetPage(db->aDb[0].pBt->pBt,pageLog.pgno,ppmemPage,0) == SQLITE_OK ) {
-          fprintf(stdout,"GetPage SUCCESS\n");
-          fprintf(stdout,"nCell: %u, cellOffset: %u\n",(*ppmemPage)->nCell,(*ppmemPage)->cellOffset);
+          //fprintf(stdout,"GetPage SUCCESS\n");
+          //fprintf(stdout,"nCell: %u, cellOffset: %u\n",(*ppmemPage)->nCell,(*ppmemPage)->cellOffset);
           int rc;
           if(pageLog.opType == 1){ //INSERT
             insertCell(*ppmemPage, pageLog.pageIndex, (char *)pgLog_mmap+between_lsn+sizeof(PageLog)+pageLog.oldSize, pageLog.newSize,0,0,&rc);
@@ -3104,7 +3107,13 @@ static int openDatabase(
             rc = clearCell(*ppmemPage, oldCell, &oldsize);
             dropCell(*ppmemPage, pageLog.pageIndex, pageLog.oldSize, &rc);
             insertCell(*ppmemPage, pageLog.pageIndex, (char *)pgLog_mmap+between_lsn+sizeof(PageLog)+pageLog.oldSize, pageLog.newSize,0,0,&rc);
-          }
+          }else if(pageLog.opType == 3){
+	    unsigned char *oldCell;
+            oldCell = findCell(*ppmemPage, pageLog.pageIndex);
+            int oldsize;
+            rc = clearCell(*ppmemPage, oldCell, &oldsize);
+            dropCell(*ppmemPage, pageLog.pageIndex, pageLog.oldSize, &rc);
+	  }
           /*
           if(rc != SQLITE_OK){
             fprintf(stderr,"insertCell FAILED!!\n");

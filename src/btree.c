@@ -42,6 +42,8 @@ extern off_t pgLog_offset;
 extern int log_count;
 extern int pragma_check;
 
+extern int is_split;
+
 //FIXME
 char write_tx_flag = 0;
 
@@ -3757,7 +3759,7 @@ static int autoVacuumCommit(BtShared *pBt){
 */
 int sqlite3BtreeCommitPhaseOne(Btree *p, const char *zMaster){
   int rc = SQLITE_OK;
-  if( (log_count>=4 || pragma_check==1) && p->inTrans==TRANS_WRITE ){
+  if( (log_count>=10 || pragma_check==1 || is_split==1) && p->inTrans==TRANS_WRITE ){
     fprintf(stderr,"Checkpoint\n");
 
     BtShared *pBt = p->pBt;
@@ -3781,7 +3783,7 @@ int sqlite3BtreeCommitPhaseOne(Btree *p, const char *zMaster){
   //FIXME
   //fprintf(stdout,"BtreeCommitPhaseOne\n");
   //FIXME
-  if(write_tx_flag){
+  if(write_tx_flag && !is_split){
     PageLog pageLog;
     pageLog.lsn = log_seq_num;
     pageLog.pgno = 0;
@@ -3870,9 +3872,10 @@ static void btreeEndTransaction(Btree *p){
 ** are no active cursors, it also releases the read lock.
 */
 int sqlite3BtreeCommitPhaseTwo(Btree *p, int bCleanup){
-if(log_count>=4 || pragma_check==1){
-  if (log_count>=4){ log_count=0;}
+if(log_count>=10 || pragma_check==1 || is_split==1){
+  if (log_count>=10){ log_count=0;}
   if (pragma_check==1){pragma_check=0;}
+  if (is_split==1){is_split = 0; log_count=0;}
   if( p->inTrans==TRANS_NONE ) return SQLITE_OK;
   sqlite3BtreeEnter(p);
   btreeIntegrity(p);
@@ -6376,7 +6379,6 @@ static void insertCell(
 
 
   assert( *pRC==SQLITE_OK );
-  fprintf(stderr,"assert~~~ idx: %d nCell: %d, nOverflow: %d \n",i,pPage->nCell,pPage->nOverflow);
   assert( i>=0 && i<=pPage->nCell+pPage->nOverflow );
   assert( MX_CELL(pPage->pBt)<=10921 );
   assert( pPage->nCell<=MX_CELL(pPage->pBt) || CORRUPT_DB );
@@ -6390,6 +6392,7 @@ static void insertCell(
   ** the term after the || in the following assert(). */
   assert( sz==pPage->xCellSize(pPage, pCell) || (sz==8 && iChild>0) );
   if( pPage->nOverflow || sz+2>pPage->nFree ){
+
     if( pTemp ){
       memcpy(pTemp, pCell, sz);
       pCell = pTemp;
@@ -6446,19 +6449,6 @@ static void insertCell(
     }
 #endif
   }
-
-//  pageLog.lsn = ++log_seq_num;
-//  pageLog.pgno = pPage->pgno;
-//  pageLog.opType = 1;//OP_INSERT
-//  pageLog.offset = i;
-//  pageLog.length = sz;
-//  memcpy(pgLog_mmap+pgLog_offset, (void *)&pageLog, sizeof(pageLog));
-//  memcpy(pgLog_mmap+pgLog_offset+sizeof(pageLog),(void *)pCell,sz);
-//  pgLog_offset += sizeof(pageLog)+sz;
-
-//  fprintf(stdout,"logSize: %d, lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, length: %d\n\n",(int)sizeof(pageLog), pageLog.lsn, pageLog.pgno, pageLog.opType, pageLog.offset, pageLog.length);
-  //PageLog *ppageLog = (PageLog *)pgLog_mmap+pgLog_offset-sizeof(pageLog)-sz;
-  //fprintf(stdout,"insertCell-lsn: %lu, pgno: %u, opType: %d, offset: %d, length: %d\n\n", ppageLog->lsn, ppageLog->pgno, ppageLog->opType, ppageLog->offset, ppageLog->length);
 }
 
 /*
@@ -7894,7 +7884,9 @@ static int balance(BtCursor *pCur){
         */ 
         assert( balance_deeper_called==0 );
         VVA_ONLY( balance_deeper_called++ );
+	fprintf(stdout,"balance_deeper\n");
         rc = balance_deeper(pPage, &pCur->apPage[1]);
+        if (is_split == 0 ){is_split=1;}
         if( rc==SQLITE_OK ){
           pCur->iPage = 1;
           pCur->aiIdx[0] = 0;
@@ -7934,7 +7926,9 @@ static int balance(BtCursor *pCur){
           */
           assert( balance_quick_called==0 ); 
           VVA_ONLY( balance_quick_called++ );
+	  fprintf(stdout,"balance_quick\n");
           rc = balance_quick(pParent, pPage, aBalanceQuickSpace);
+	  if (is_split == 0 ){is_split=1;}
         }else
 #endif
         {
@@ -7956,8 +7950,10 @@ static int balance(BtCursor *pCur){
           ** pSpace buffer passed to the latter call to balance_nonroot().
           */
           u8 *pSpace = sqlite3PageMalloc(pCur->pBt->pageSize);
+	  fprintf(stdout,"balance_nonroot\n");
           rc = balance_nonroot(pParent, iIdx, pSpace, iPage==1,
                                pCur->hints&BTREE_BULKLOAD);
+	  if (is_split == 0 ){is_split=1;}
           if( pFree ){
             /* If pFree is not NULL, it points to the pSpace buffer used 
             ** by a previous call to balance_nonroot(). Its contents are
@@ -8190,7 +8186,6 @@ int sqlite3BtreeInsert(
     assert( rc==SQLITE_OK );
     pCur->curFlags &= ~(BTCF_ValidNKey);
     rc = balance(pCur);
-
     /* Must make sure nOverflow is reset to zero even if the balance()
     ** fails. Internal data structure corruption will result otherwise. 
     ** Also, set the cursor state to invalid. This stops saveCursorPosition()

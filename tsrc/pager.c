@@ -6445,14 +6445,14 @@ int sqlite3PagerCommitPhaseTwo(Pager *pPager){
     return SQLITE_OK;
   }
 
-  //FIXME - initialize file content
-  memset(pgLog_mmap,0,log_seq_num+sizeof(PageLog));
-  log_seq_num = 0;
-
   extern int pragma_check;
   if(pragma_check!=1){
     sqlite3PagerCheckpoint(pPager,0,0,0);
   }
+
+  //FIXME - initialize file content
+  memset(pgLog_mmap,0,log_seq_num+sizeof(PageLog));
+  log_seq_num = 0;
 
   PAGERTRACE(("COMMIT %d\n", PAGERID(pPager)));
   pPager->iDataVersion++;
