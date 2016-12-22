@@ -3759,7 +3759,7 @@ static int autoVacuumCommit(BtShared *pBt){
 */
 int sqlite3BtreeCommitPhaseOne(Btree *p, const char *zMaster){
   int rc = SQLITE_OK;
-  if( (log_count>=10 || pragma_check==1 || is_split==1) && p->inTrans==TRANS_WRITE ){
+  if( (log_count>=30 || pragma_check==1 || is_split==1) && p->inTrans==TRANS_WRITE ){
     fprintf(stderr,"Checkpoint\n");
 
     BtShared *pBt = p->pBt;
@@ -3872,8 +3872,8 @@ static void btreeEndTransaction(Btree *p){
 ** are no active cursors, it also releases the read lock.
 */
 int sqlite3BtreeCommitPhaseTwo(Btree *p, int bCleanup){
-if(log_count>=10 || pragma_check==1 || is_split==1){
-  if (log_count>=10){ log_count=0;}
+if(log_count>=30 || pragma_check==1 || is_split==1){
+  if (log_count>=30){ log_count=0;}
   if (pragma_check==1){pragma_check=0;}
   if (is_split==1){is_split = 0; log_count=0;}
   if( p->inTrans==TRANS_NONE ) return SQLITE_OK;
