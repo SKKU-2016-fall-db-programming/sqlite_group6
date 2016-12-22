@@ -785,6 +785,7 @@ static sqlite3_pcache *pcache1Create(int szPage, int szExtra, int bPurgeable){
       pCache = 0;
     }
   }
+
   return (sqlite3_pcache *)pCache;
 }
 
@@ -992,6 +993,9 @@ static PgHdr1 *pcache1FetchNoMutex(
   ** Otherwise (page not in hash and createFlag!=0) continue with
   ** subsequent steps to try to create the page. */
   if( pPage ){
+    PgHdr *hitPage = (PgHdr *)(pPage->page.pExtra);
+    PCache *hitCache = hitPage->pCache;
+    hitCache->isHit = 1;
     if( !pPage->isPinned ){
       return pcache1PinPage(pPage);
     }else{

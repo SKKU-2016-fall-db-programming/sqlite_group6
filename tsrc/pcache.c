@@ -51,6 +51,7 @@ struct PCache {
   int (*xStress)(void*,PgHdr*);       /* Call to try make a page clean */
   void *pStress;                      /* Argument to xStress */
   sqlite3_pcache *pCache;             /* Pluggable cache module */
+  int isHit;
 };
 
 /********************************** Test and Debug Logic **********************/

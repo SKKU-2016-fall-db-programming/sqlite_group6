@@ -25,12 +25,27 @@ static const char zMagicHeader[] = SQLITE_FILE_HEADER;
 ** Set this global variable to 1 to enable tracing using the TRACE
 ** macro.
 */
-#if 1
+#if 0
 int sqlite3BtreeTrace=1;  /* True to enable tracing */
 # define TRACE(X)  if(sqlite3BtreeTrace){printf X;fflush(stdout);}
 #else
 # define TRACE(X)
 #endif
+
+
+//FIXME - JAEHUN - define pgLog_mmap and log_seq_num as extern;
+
+extern void *pgLog_mmap;
+extern u64 log_seq_num;
+extern off_t pgLog_offset;
+
+extern int log_count;
+extern int pragma_check;
+
+extern int is_split;
+
+//FIXME
+char write_tx_flag = 0;
 
 /*
 ** Extract a 2-byte big-endian integer from an array of unsigned bytes.
@@ -3263,9 +3278,27 @@ trans_begun:
     */
     rc = sqlite3PagerOpenSavepoint(pBt->pPager, p->db->nSavepoint);
   }
+  //FIXME
+  //fprintf(stdout,"BtreeBeginTrans\n");
+  if(wrflag > 0){
+    PageLog pageLog;
+    write_tx_flag = 1;
+    pageLog.lsn = log_seq_num;
+    pageLog.pgno = 0;
+    pageLog.opType = 4; //4 - OP_BEGIN
+    pageLog.pageIndex = -1;
+    pageLog.oldSize = 0;
+    pageLog.newSize = 0;
+
+    memcpy(pgLog_mmap+log_seq_num, (void *)&pageLog, sizeof(pageLog));
+    fprintf(stdout,"BEGIN - logSize: %d, lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",(int)sizeof(pageLog), pageLog.lsn, pageLog.pgno, pageLog.opType, pageLog.pageIndex, pageLog.oldSize, pageLog.newSize);
+
+    log_seq_num+=sizeof(PageLog);
+  }
 
   btreeIntegrity(p);
   sqlite3BtreeLeave(p);
+
   return rc;
 }
 
@@ -3726,7 +3759,9 @@ static int autoVacuumCommit(BtShared *pBt){
 */
 int sqlite3BtreeCommitPhaseOne(Btree *p, const char *zMaster){
   int rc = SQLITE_OK;
-  if( p->inTrans==TRANS_WRITE ){
+  if( (log_count>=30 || pragma_check==1 || is_split==1) && p->inTrans==TRANS_WRITE ){
+    fprintf(stderr,"Checkpoint\n");
+
     BtShared *pBt = p->pBt;
     sqlite3BtreeEnter(p);
 #ifndef SQLITE_OMIT_AUTOVACUUM
@@ -3744,6 +3779,25 @@ int sqlite3BtreeCommitPhaseOne(Btree *p, const char *zMaster){
     rc = sqlite3PagerCommitPhaseOne(pBt->pPager, zMaster, 0);
     sqlite3BtreeLeave(p);
   }
+
+  //FIXME
+  //fprintf(stdout,"BtreeCommitPhaseOne\n");
+  //FIXME
+  if(write_tx_flag && !is_split){
+    PageLog pageLog;
+    pageLog.lsn = log_seq_num;
+    pageLog.pgno = 0;
+    pageLog.opType = 5; //5 - OP_COMMIT
+    pageLog.pageIndex = -1;
+    pageLog.oldSize = 0;
+    pageLog.newSize = 0;
+
+    memcpy(pgLog_mmap+log_seq_num, (void *)&pageLog, sizeof(pageLog));
+    fprintf(stdout,"COMMIT - logSize: %d, lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",(int)sizeof(pageLog), pageLog.lsn, pageLog.pgno, pageLog.opType, pageLog.pageIndex, pageLog.oldSize, pageLog.newSize);
+
+    write_tx_flag = 0;
+    log_seq_num += sizeof(PageLog);
+  }
   return rc;
 }
 
@@ -3755,6 +3809,10 @@ static void btreeEndTransaction(Btree *p){
   BtShared *pBt = p->pBt;
   sqlite3 *db = p->db;
   assert( sqlite3BtreeHoldsMutex(p) );
+  //fprintf(stdout, "BtreeEndTrans\n");
+  
+
+  
 
 #ifndef SQLITE_OMIT_AUTOVACUUM
   pBt->bDoTruncate = 0;
@@ -3814,7 +3872,10 @@ static void btreeEndTransaction(Btree *p){
 ** are no active cursors, it also releases the read lock.
 */
 int sqlite3BtreeCommitPhaseTwo(Btree *p, int bCleanup){
-
+if(log_count>=30 || pragma_check==1 || is_split==1){
+  if (log_count>=30){ log_count=0;}
+  if (pragma_check==1){pragma_check=0;}
+  if (is_split==1){is_split = 0; log_count=0;}
   if( p->inTrans==TRANS_NONE ) return SQLITE_OK;
   sqlite3BtreeEnter(p);
   btreeIntegrity(p);
@@ -3839,6 +3900,9 @@ int sqlite3BtreeCommitPhaseTwo(Btree *p, int bCleanup){
 
   btreeEndTransaction(p);
   sqlite3BtreeLeave(p);
+}else{
+  //btreeEndTransaction(p);
+}
   return SQLITE_OK;
 }
 
@@ -3997,6 +4061,8 @@ int sqlite3BtreeRollback(Btree *p, int tripCode, int writeOnly){
 int sqlite3BtreeBeginStmt(Btree *p, int iStatement){
   int rc;
   BtShared *pBt = p->pBt;
+  //FIXME
+  //fprintf(stdout, "##BtreeBeginStmt\n");
   sqlite3BtreeEnter(p);
   assert( p->inTrans==TRANS_WRITE );
   assert( (pBt->btsFlags & BTS_READ_ONLY)==0 );
@@ -6311,6 +6377,7 @@ static void insertCell(
   u8 *data;         /* The content of the whole page */
   u8 *pIns;         /* The point in pPage->aCellIdx[] where no cell inserted */
 
+
   assert( *pRC==SQLITE_OK );
   assert( i>=0 && i<=pPage->nCell+pPage->nOverflow );
   assert( MX_CELL(pPage->pBt)<=10921 );
@@ -6325,6 +6392,7 @@ static void insertCell(
   ** the term after the || in the following assert(). */
   assert( sz==pPage->xCellSize(pPage, pCell) || (sz==8 && iChild>0) );
   if( pPage->nOverflow || sz+2>pPage->nFree ){
+
     if( pTemp ){
       memcpy(pTemp, pCell, sz);
       pCell = pTemp;
@@ -7816,7 +7884,9 @@ static int balance(BtCursor *pCur){
         */ 
         assert( balance_deeper_called==0 );
         VVA_ONLY( balance_deeper_called++ );
+	fprintf(stdout,"balance_deeper\n");
         rc = balance_deeper(pPage, &pCur->apPage[1]);
+        if (is_split == 0 ){is_split=1;}
         if( rc==SQLITE_OK ){
           pCur->iPage = 1;
           pCur->aiIdx[0] = 0;
@@ -7856,7 +7926,9 @@ static int balance(BtCursor *pCur){
           */
           assert( balance_quick_called==0 ); 
           VVA_ONLY( balance_quick_called++ );
+	  fprintf(stdout,"balance_quick\n");
           rc = balance_quick(pParent, pPage, aBalanceQuickSpace);
+	  if (is_split == 0 ){is_split=1;}
         }else
 #endif
         {
@@ -7878,8 +7950,10 @@ static int balance(BtCursor *pCur){
           ** pSpace buffer passed to the latter call to balance_nonroot().
           */
           u8 *pSpace = sqlite3PageMalloc(pCur->pBt->pageSize);
+	  fprintf(stdout,"balance_nonroot\n");
           rc = balance_nonroot(pParent, iIdx, pSpace, iPage==1,
                                pCur->hints&BTREE_BULKLOAD);
+	  if (is_split == 0 ){is_split=1;}
           if( pFree ){
             /* If pFree is not NULL, it points to the pSpace buffer used 
             ** by a previous call to balance_nonroot(). Its contents are
@@ -7954,6 +8028,9 @@ int sqlite3BtreeInsert(
   BtShared *pBt = p->pBt;
   unsigned char *oldCell;
   unsigned char *newCell = 0;
+  //FIXME - JAEHUN - Make PageLog and fill the PageLog. Finally, memcpy the Log structure and Cell in mmap.
+  PageLog pageLog;
+  char *cpOldCell;
 
   if( pCur->eState==CURSOR_FAULT ){
     assert( pCur->skipNext!=SQLITE_OK );
@@ -8015,6 +8092,9 @@ int sqlite3BtreeInsert(
   assert( pPage->intKey || pX->nKey>=0 );
   assert( pPage->leaf || !pPage->intKey );
 
+  //FIXME - JAEHUN - increase log count
+  log_count++;
+
   TRACE(("INSERT: table=%d nkey=%lld ndata=%d page=%d %s\n",
           pCur->pgnoRoot, pX->nKey, pX->nData, pPage->pgno,
           loc==0 ? "overwrite" : "new entry"));
@@ -8026,6 +8106,7 @@ int sqlite3BtreeInsert(
   assert( szNew==pPage->xCellSize(pPage, newCell) );
   assert( szNew <= MX_CELL_SIZE(pBt) );
   idx = pCur->aiIdx[pCur->iPage];
+//  fprintf(stdout,"nKey: %lld, idx: %d\n",pX->nKey,idx);
   if( loc==0 ){
     u16 szOld;
     assert( idx<pPage->nCell );
@@ -8038,15 +8119,45 @@ int sqlite3BtreeInsert(
       memcpy(newCell, oldCell, 4);
     }
     rc = clearCell(pPage, oldCell, &szOld);
+
+    // FIXME - JAEHUN - assign oldSize in Page Log
+    pageLog.oldSize = (int)szOld;
+    
+    cpOldCell = (char *)malloc(szOld);
+    memcpy(cpOldCell,oldCell,szOld);
+
     dropCell(pPage, idx, szOld, &rc);
     if( rc ) goto end_insert;
   }else if( loc<0 && pPage->nCell>0 ){
     assert( pPage->leaf );
+    pageLog.oldSize = 0;
     idx = ++pCur->aiIdx[pCur->iPage];
   }else{
     assert( pPage->leaf );
+    pageLog.oldSize = 0;
   }
+//  fprintf(stdout,"AGAIN    nKey: %lld, idx: %d\n",pX->nKey,idx);
   insertCell(pPage, idx, newCell, szNew, 0, 0, &rc);
+
+  pageLog.lsn = log_seq_num;
+  pageLog.pgno = pPage->pgno;
+  pageLog.opType = (loc==0 ? 2 : 1 ); //2-OP_UPDATE, 1-OP_INSERT
+  pageLog.pageIndex = idx;
+  pageLog.newSize = szNew;
+  // Information
+  memcpy(pgLog_mmap+log_seq_num, (void *)&pageLog, sizeof(pageLog));
+  if(pageLog.oldSize){
+    // Old data
+    memcpy(pgLog_mmap+log_seq_num+sizeof(pageLog),(void *)cpOldCell, pageLog.oldSize);
+    free(cpOldCell);
+  }
+  // New data
+  memcpy(pgLog_mmap+log_seq_num+sizeof(pageLog)+pageLog.oldSize,(void *)newCell,szNew);
+  log_seq_num += sizeof(pageLog)+pageLog.oldSize+pageLog.newSize;
+
+  fprintf(stdout,"INSERT - logSize: %d, lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",(int)sizeof(pageLog), pageLog.lsn, pageLog.pgno, pageLog.opType, pageLog.pageIndex, pageLog.oldSize, pageLog.newSize);
+
+
   assert( pPage->nOverflow==0 || rc==SQLITE_OK );
   assert( rc!=SQLITE_OK || pPage->nCell>0 || pPage->nOverflow>0 );
 
@@ -8075,7 +8186,6 @@ int sqlite3BtreeInsert(
     assert( rc==SQLITE_OK );
     pCur->curFlags &= ~(BTCF_ValidNKey);
     rc = balance(pCur);
-
     /* Must make sure nOverflow is reset to zero even if the balance()
     ** fails. Internal data structure corruption will result otherwise. 
     ** Also, set the cursor state to invalid. This stops saveCursorPosition()
@@ -8117,6 +8227,9 @@ int sqlite3BtreeDelete(BtCursor *pCur, u8 flags){
   u16 szCell;                          /* Size of the cell being deleted */
   int bSkipnext = 0;                   /* Leaf cursor in SKIPNEXT state */
   u8 bPreserve = flags & BTREE_SAVEPOSITION;  /* Keep cursor valid */
+
+  //FIXME - JAEHUN - Make PageLog and fill the PageLog. Finally, memcpy the Log structure and Cell in mmap.
+  PageLog pageLog;
 
   assert( cursorOwnsBtShared(pCur) );
   assert( pBt->inTransaction==TRANS_WRITE );
@@ -8187,6 +8300,23 @@ int sqlite3BtreeDelete(BtCursor *pCur, u8 flags){
   rc = sqlite3PagerWrite(pPage->pDbPage);
   if( rc ) return rc;
   rc = clearCell(pPage, pCell, &szCell);
+
+  log_count++;
+
+  pageLog.lsn = log_seq_num;
+  pageLog.pgno = pPage->pgno;
+  pageLog.opType = 3; //3 - OP_DELETE
+  pageLog.pageIndex = iCellIdx;
+  pageLog.oldSize = szCell;
+  pageLog.newSize = 0;
+  
+  memcpy(pgLog_mmap+log_seq_num, (void *)&pageLog, sizeof(pageLog));
+  memcpy(pgLog_mmap+log_seq_num+sizeof(pageLog),(void *)pCell, pageLog.oldSize);
+
+  fprintf(stdout,"DEL - logSize: %d, lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",(int)sizeof(pageLog), pageLog.lsn, pageLog.pgno, pageLog.opType, pageLog.pageIndex, pageLog.oldSize, pageLog.newSize);
+
+  log_seq_num += sizeof(pageLog)+pageLog.oldSize;
+
   dropCell(pPage, iCellIdx, szCell, &rc);
   if( rc ) return rc;
 

@@ -112,7 +112,7 @@
 /*
 ** Macros for troubleshooting.  Normally turned off
 */
-#if 1
+#if 0
 int sqlite3PagerTrace=1;  /* True to enable tracing */
 #define sqlite3DebugPrintf printf
 #define PAGERTRACE(X)     if( sqlite3PagerTrace ){ sqlite3DebugPrintf X; }
@@ -428,6 +428,13 @@ int sqlite3PagerTrace=1;  /* True to enable tracing */
 */
 #define MAX_SECTOR_SIZE 0x10000
 
+//FIXME - JAEHUN - Variables for calculate hit/miss ratio. PLUS log_seq_num
+u64 totalCall=0;
+u64 hitCall=0;
+
+extern void *pgLog_mmap;
+extern off_t pgLog_offset;
+extern u64 log_seq_num;
 
 /*
 ** An instance of the following structure is allocated for each active
@@ -2076,6 +2083,8 @@ static int pager_end_transaction(Pager *pPager, int hasMaster, int bCommit){
   }
   pPager->eState = PAGER_READER;
   pPager->setMaster = 0;
+
+  //fprintf(stdout, "pager_end_transaction\n");
 
   return (rc==SQLITE_OK?rc2:rc);
 }
@@ -5337,10 +5346,12 @@ int sqlite3PagerGet(
   if( pgno<=1 && pgno==0 ){
     return SQLITE_CORRUPT_BKPT;
   }
+//  assert( pPager->eState>=PAGER_READER );
   assert( pPager->eState>=PAGER_READER );
   assert( assert_pager_state(pPager) );
   assert( noContent==0 || bMmapOk==0 );
 
+//  assert( pPager->hasHeldSharedLock==1 );
   assert( pPager->hasHeldSharedLock==1 );
 
   /* If the pager is in the error state, return an error immediately. 
@@ -5352,6 +5363,8 @@ int sqlite3PagerGet(
       rc = sqlite3WalFindFrame(pPager->pWal, pgno, &iFrame);
       if( rc!=SQLITE_OK ) goto pager_acquire_err;
     }
+
+    totalCall += 1;
 
     if( bMmapOk && iFrame==0 ){
       void *pData = 0;
@@ -5382,7 +5395,14 @@ int sqlite3PagerGet(
 
     {
       sqlite3_pcache_page *pBase;
+      pPager->pPCache->isHit = 0;
       pBase = sqlite3PcacheFetch(pPager->pPCache, pgno, 3);
+      if(pPager->pPCache->isHit == 1){
+	hitCall += 1;
+	if (totalCall % 300000 == 0){
+	  printf("totalCall: %llu, hitCall: %llu, hit-ratio: %.4f%\n\n",totalCall, hitCall, ((float)hitCall/((float)totalCall))*100 );
+	}
+      }
       if( pBase==0 ){
         rc = sqlite3PcacheFetchStress(pPager->pPCache, pgno, &pBase);
         if( rc!=SQLITE_OK ) goto pager_acquire_err;
@@ -5697,7 +5717,23 @@ int sqlite3PagerBegin(Pager *pPager, int exFlag, int subjInMemory){
     assert( rc!=SQLITE_OK || pPager->eState==PAGER_WRITER_LOCKED );
     assert( assert_pager_state(pPager) );
   }
+  //fprintf(stdout,"PagerBegin\n");
+/*
+  PageLog pageLog;
 
+  pageLog.lsn = log_seq_num;
+  pageLog.pgno = 0;
+  pageLog.opType = 4; // 4 - OP_BEGIN
+  pageLog.pageIndex = -1;
+  pageLog.oldSize = 0;
+  pageLog.newSize = 0;
+
+  memcpy(pgLog_mmap+log_seq_num, (void *)&pageLog, sizeof(pageLog));
+
+  fprintf(stdout,"BEGIN - logSize: %d, lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",(int)sizeof(pageLog), pageLog.lsn, pageLog.pgno, pageLog.opType, pageLog.pageIndex, pageLog.oldSize, pageLog.newSize);
+  
+  log_seq_num += sizeof(pageLog);
+*/
   PAGERTRACE(("TRANSACTION %d\n", PAGERID(pPager)));
   return rc;
 }
@@ -5770,10 +5806,18 @@ static int pager_write(PgHdr *pPg){
   ** been started. The journal file may or may not be open at this point.
   ** It is never called in the ERROR state.
   */
+
+/*
   assert( pPager->eState==PAGER_WRITER_LOCKED
        || pPager->eState==PAGER_WRITER_CACHEMOD
        || pPager->eState==PAGER_WRITER_DBMOD
   );
+*/
+  assert( pPager->eState==PAGER_WRITER_LOCKED
+       || pPager->eState==PAGER_WRITER_CACHEMOD
+       || pPager->eState==PAGER_WRITER_DBMOD
+  );
+
   assert( assert_pager_state(pPager) );
   assert( pPager->errCode==0 );
   assert( pPager->readOnly==0 );
@@ -5792,6 +5836,7 @@ static int pager_write(PgHdr *pPg){
     rc = pager_open_journal(pPager);
     if( rc!=SQLITE_OK ) return rc;
   }
+//  assert( pPager->eState>=PAGER_WRITER_CACHEMOD );
   assert( pPager->eState>=PAGER_WRITER_CACHEMOD );
   assert( assert_pager_state(pPager) );
 
@@ -5951,7 +5996,7 @@ static SQLITE_NOINLINE int pagerWriteLargeSector(PgHdr *pPg){
 int sqlite3PagerWrite(PgHdr *pPg){
   Pager *pPager = pPg->pPager;
   assert( (pPg->flags & PGHDR_MMAP)==0 );
-  assert( pPager->eState>=PAGER_WRITER_LOCKED );
+//  assert( pPager->eState>=PAGER_WRITER_LOCKED );
   assert( assert_pager_state(pPager) );
   if( pPager->errCode ){
     return pPager->errCode;
@@ -6205,6 +6250,11 @@ int sqlite3PagerCommitPhaseOne(
   PAGERTRACE(("DATABASE SYNC: File=%s zMaster=%s nSize=%d\n", 
       pPager->zFilename, zMaster, pPager->dbSize));
 
+  //FIXME - JAEHUN - msync
+  msync(pgLog_mmap,1024*1024,MS_SYNC);
+  PageLog * pageLog = (PageLog *)pgLog_mmap;
+  //fprintf(stdout,"sqlite3BtreeCommit-lsn: %lu, pgno: %u, opType: %d, offset: %d, length: %d\n\n", pageLog->lsn, pageLog->pgno, pageLog->opType, pageLog->offset, pageLog->length);
+
   /* If no database changes have been made, return early. */
   if( pPager->eState<PAGER_WRITER_CACHEMOD ) return SQLITE_OK;
 
@@ -6362,6 +6412,8 @@ commit_phase_one_exit:
 int sqlite3PagerCommitPhaseTwo(Pager *pPager){
   int rc = SQLITE_OK;                  /* Return code */
 
+  PageLog pageLog;
+
   /* This routine should not be called if a prior error has occurred.
   ** But if (due to a coding error elsewhere in the system) it does get
   ** called, just return the same error code without doing anything. */
@@ -6392,6 +6444,15 @@ int sqlite3PagerCommitPhaseTwo(Pager *pPager){
     pPager->eState = PAGER_READER;
     return SQLITE_OK;
   }
+
+  extern int pragma_check;
+  if(pragma_check!=1){
+    sqlite3PagerCheckpoint(pPager,0,0,0);
+  }
+
+  //FIXME - initialize file content
+  memset(pgLog_mmap,0,log_seq_num+sizeof(PageLog));
+  log_seq_num = 0;
 
   PAGERTRACE(("COMMIT %d\n", PAGERID(pPager)));
   pPager->iDataVersion++;

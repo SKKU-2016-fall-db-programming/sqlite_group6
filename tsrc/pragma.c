@@ -292,6 +292,8 @@ const char *sqlite3JournalModename(int eMode){
 ** and pId2 is the id.  If the left side is just "id" then pId1 is the
 ** id and pId2 is any empty string.
 */
+int pragma_check=0;
+
 void sqlite3Pragma(
   Parse *pParse, 
   Token *pId1,        /* First part of [schema.]id field */
@@ -311,6 +313,8 @@ void sqlite3Pragma(
   Db *pDb;                     /* The specific database being pragmaed */
   Vdbe *v = sqlite3GetVdbe(pParse);  /* Prepared statement */
   const struct sPragmaNames *pPragma;
+
+  pragma_check=1;
 
   if( v==0 ) return;
   sqlite3VdbeRunOnlyOnce(v);
