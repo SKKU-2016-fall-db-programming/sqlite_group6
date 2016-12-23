@@ -1,0 +1,6 @@
+*.log
+*.swp
+*.swo
+cscope.*
+*.out
+page_log

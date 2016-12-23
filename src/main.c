@@ -102,6 +102,26 @@ char *sqlite3_temp_directory = 0;
 char *sqlite3_data_directory = 0;
 
 /*
+<<<<<<< HEAD
+=======
+** FIXME - JAEHUN - Define pgLog_fd and pgLog_mmap pointer
+*/
+
+#include <sys/types.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+int pgLog_fd = 0;
+void *pgLog_mmap = NULL;
+
+u64 log_seq_num = 0;
+int log_count = 0;
+off_t pgLog_offset = 0;
+int is_split = 0;
+
+/*
+>>>>>>> recovery
 ** Initialize SQLite.  
 **
 ** This routine must be called to initialize the memory allocation,
@@ -1036,6 +1056,18 @@ static int sqlite3Close(sqlite3 *db, int forceZombie){
   if( db->mTrace & SQLITE_TRACE_CLOSE ){
     db->xTrace(SQLITE_TRACE_CLOSE, db->pTraceArg, db, 0);
   }
+<<<<<<< HEAD
+=======
+  
+  //FIXME - JAEHUN - unmap
+  int mapre;
+  mapre=munmap(pgLog_mmap,1024*1024);
+  if(mapre == -1){
+    fprintf(stderr,"MUNMAP IS FAILED\n");
+    return -1;
+  }
+  
+>>>>>>> recovery
 
   /* Force xDisconnect calls on all virtual tables */
   disconnectAllVtab(db);
@@ -2882,6 +2914,10 @@ static int openDatabase(
   sqlite3HashInit(&db->aModule);
 #endif
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> recovery
   /* Add the default collation sequence BINARY. BINARY works for both UTF-8
   ** and UTF-16, so add a version for each to avoid any unnecessary
   ** conversions. The only error that can occur here is a malloc() failure.
@@ -2941,7 +2977,10 @@ static int openDatabase(
   if( db->mallocFailed ){
     goto opendb_out;
   }
+<<<<<<< HEAD
 
+=======
+>>>>>>> recovery
   /* Register all built-in functions, but do not attempt to read the
   ** database schema yet. This is delayed until the first time the database
   ** is accessed.
@@ -2949,6 +2988,16 @@ static int openDatabase(
   sqlite3Error(db, SQLITE_OK);
   sqlite3RegisterPerConnectionBuiltinFunctions(db);
 
+<<<<<<< HEAD
+=======
+  char tmpsql[100]="create table test (no INTEGER)";
+  char tmpsql2[100]="select * from test";
+
+  sqlite3_exec(db,tmpsql,0,0,&zErrMsg);
+  sqlite3_exec(db,tmpsql2,0,0,&zErrMsg);
+
+
+>>>>>>> recovery
   /* Load automatic extensions - extensions that have been registered
   ** using the sqlite3_automatic_extension() API.
   */
@@ -2961,6 +3010,115 @@ static int openDatabase(
     }
   }
 
+<<<<<<< HEAD
+=======
+  int f_ok;
+  f_ok = access("./page_log",F_OK);
+
+  //FIXME - JAEHUN - open pgLogfile and mmap the file
+  pgLog_fd = open("./page_log",O_RDWR | O_CREAT, 0644);
+  if (pgLog_fd < 0) {
+    fprintf(stderr,"PAGE LOG FILE OPEN ERROR\n");
+    return -1;
+  }else {
+    ftruncate(pgLog_fd, 1024*1024);
+  }
+
+  pgLog_mmap = (void *) mmap(NULL, 1024*1024, PROT_READ|PROT_WRITE, MAP_SHARED, pgLog_fd, 0);
+
+  if (pgLog_mmap == MAP_FAILED) {
+    fprintf(stderr,"LOG FILE MMAPING ERROR\n");
+    return -1;
+  }
+
+//  memset(pgLog_mmap,0,1024*1024);
+  PageLog *pLog=(PageLog *)pgLog_mmap;
+
+  fprintf(stdout,"openDB - lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",pLog->lsn, pLog->pgno, pLog->opType, pLog->pageIndex, pLog->oldSize, pLog->newSize);
+
+  //FIXME - JAEHUN - Get MemPage with pgno by btreeGetPage()
+  MemPage **ppmemPage;
+
+  ppmemPage = (MemPage **)malloc(sizeof(MemPage *));
+
+  sqlite3BtreeEnter(db->aDb[0].pBt);
+  btreeIntegrity(db->aDb[0].pBt);
+
+  log_seq_num = 0;
+  u64 last_begin_lsn = log_seq_num;
+
+  PageLog pageLog;
+  //FIXME
+  while(!f_ok){
+    memcpy((void *)&pageLog, pgLog_mmap + log_seq_num, sizeof(pageLog));
+    //fprintf(stdout,"lsn:%lu\t=> logSize: %d, lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",log_seq_num,(int)sizeof(pageLog), pageLog.lsn, pageLog.pgno, pageLog.opType, pageLog.pageIndex, pageLog.oldSize, pageLog.newSize);
+    
+    if(pageLog.opType == 0){
+      break;
+    }
+
+    if(pageLog.opType == 4){ //BEGIN
+      last_begin_lsn = log_seq_num;
+      log_seq_num += sizeof(pageLog);
+      continue;
+    }else if(pageLog.opType == 1 || pageLog.opType == 2 || pageLog.opType == 3){ //INSERT || UPDATE
+      log_seq_num += sizeof(pageLog)+pageLog.oldSize+pageLog.newSize;
+    }else if(pageLog.opType == 5){ //COMMIT
+      u64 between_lsn = last_begin_lsn + (u64)sizeof(pageLog);
+      while(between_lsn < log_seq_num){ // begin <   < commit
+        memcpy((void *)&pageLog, pgLog_mmap + between_lsn, sizeof(pageLog));
+        //fprintf(stdout,"BETWEEN:lsn:%lu\t=> logSize: %d, lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",between_lsn,(int)sizeof(pageLog), pageLog.lsn, pageLog.pgno, pageLog.opType, pageLog.pageIndex, pageLog.oldSize, pageLog.newSize);
+        if (btreeGetPage(db->aDb[0].pBt->pBt,pageLog.pgno,ppmemPage,0) == SQLITE_OK ) {
+	  (*ppmemPage)->pDbPage->pPager->eState=PAGER_WRITER_FINISHED;
+          //fprintf(stdout,"GetPage SUCCESS\n");
+          //fprintf(stdout,"nCell: %u, cellOffset: %u\n",(*ppmemPage)->nCell,(*ppmemPage)->cellOffset);
+          int rc;
+          if(pageLog.opType == 1){ //INSERT
+            insertCell(*ppmemPage, pageLog.pageIndex, (char *)pgLog_mmap+between_lsn+sizeof(PageLog)+pageLog.oldSize, pageLog.newSize,0,0,&rc);
+          
+          }else if(pageLog.opType == 2){ //UPDATE
+            unsigned char *oldCell;
+            oldCell = findCell(*ppmemPage, pageLog.pageIndex);
+            int oldsize;
+            rc = clearCell(*ppmemPage, oldCell, &oldsize);
+            dropCell(*ppmemPage, pageLog.pageIndex, pageLog.oldSize, &rc);
+            insertCell(*ppmemPage, pageLog.pageIndex, (char *)pgLog_mmap+between_lsn+sizeof(PageLog)+pageLog.oldSize, pageLog.newSize,0,0,&rc);
+          }else if(pageLog.opType == 3){
+	    unsigned char *oldCell;
+            oldCell = findCell(*ppmemPage, pageLog.pageIndex);
+            int oldsize;
+            rc = clearCell(*ppmemPage, oldCell, &oldsize);
+            dropCell(*ppmemPage, pageLog.pageIndex, pageLog.oldSize, &rc);
+	  }
+          /*
+          if(rc != SQLITE_OK){
+            fprintf(stderr,"insertCell FAILED!!\n");
+          }else{
+            fprintf(stdout,"insertCell SUCCESS!!\n");
+          }
+          */
+        }else{
+          //fprintf(stderr,"btreeGetPage FAILED!!UU\n");
+        }
+        between_lsn += (u64)(sizeof(pageLog)+pageLog.oldSize+pageLog.newSize);
+      }//while
+      log_seq_num += sizeof(pageLog);
+    }
+
+    
+  }
+  if (!f_ok){
+    extern int pragma_check;
+    pragma_check = 1;
+    db->aDb[0].pBt->inTrans=TRANS_WRITE;
+    sqlite3BtreeCommit(db->aDb[0].pBt);
+  }
+
+  btreeIntegrity(db->aDb[0].pBt);
+  sqlite3BtreeLeave(db->aDb[0].pBt);
+
+
+>>>>>>> recovery
 #ifdef SQLITE_ENABLE_FTS1
   if( !db->mallocFailed ){
     extern int sqlite3Fts1Init(sqlite3*);
@@ -3066,6 +3224,10 @@ opendb_out:
     }
   }
 #endif
+<<<<<<< HEAD
+=======
+
+>>>>>>> recovery
   sqlite3_free(zOpen);
   return rc & 0xff;
 }

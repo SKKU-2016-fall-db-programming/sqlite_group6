@@ -500,6 +500,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+<<<<<<< HEAD
+=======
+
+//FIXME - JAEHUN - add <sys/mman.h> header
+#include <sys/mman.h>
+
+>>>>>>> recovery
 #include <assert.h>
 #include <stddef.h>
 
@@ -1046,6 +1053,22 @@ typedef struct Walker Walker;
 typedef struct WhereInfo WhereInfo;
 typedef struct With With;
 
+<<<<<<< HEAD
+=======
+//FIXME - JAEHUN - define log structure
+
+typedef struct PageLog PageLog;
+
+struct PageLog {
+	u64 lsn;
+	u32 pgno;
+	int opType;
+	int pageIndex;
+	int oldSize;
+	int newSize;
+};
+
+>>>>>>> recovery
 /*
 ** Defer sourcing vdbe.h and btree.h until after the "u8" and
 ** "BusyHandler" typedefs. vdbe.h also requires a few of the opaque
