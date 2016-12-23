@@ -3291,7 +3291,7 @@ trans_begun:
     pageLog.newSize = 0;
 
     memcpy(pgLog_mmap+log_seq_num, (void *)&pageLog, sizeof(pageLog));
-    fprintf(stdout,"BEGIN - logSize: %d, lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",(int)sizeof(pageLog), pageLog.lsn, pageLog.pgno, pageLog.opType, pageLog.pageIndex, pageLog.oldSize, pageLog.newSize);
+    //fprintf(stdout,"BEGIN - logSize: %d, lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",(int)sizeof(pageLog), pageLog.lsn, pageLog.pgno, pageLog.opType, pageLog.pageIndex, pageLog.oldSize, pageLog.newSize);
 
     log_seq_num+=sizeof(PageLog);
   }
@@ -3760,7 +3760,7 @@ static int autoVacuumCommit(BtShared *pBt){
 int sqlite3BtreeCommitPhaseOne(Btree *p, const char *zMaster){
   int rc = SQLITE_OK;
   if( (log_count>=2000 || pragma_check==1 || is_split==1) && p->inTrans==TRANS_WRITE ){
-    fprintf(stderr,"Checkpoint\n");
+    //fprintf(stderr,"Checkpoint\n");
 
     BtShared *pBt = p->pBt;
     sqlite3BtreeEnter(p);
@@ -3793,7 +3793,7 @@ int sqlite3BtreeCommitPhaseOne(Btree *p, const char *zMaster){
     pageLog.newSize = 0;
 
     memcpy(pgLog_mmap+log_seq_num, (void *)&pageLog, sizeof(pageLog));
-    fprintf(stdout,"COMMIT - logSize: %d, lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",(int)sizeof(pageLog), pageLog.lsn, pageLog.pgno, pageLog.opType, pageLog.pageIndex, pageLog.oldSize, pageLog.newSize);
+    //fprintf(stdout,"COMMIT - logSize: %d, lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",(int)sizeof(pageLog), pageLog.lsn, pageLog.pgno, pageLog.opType, pageLog.pageIndex, pageLog.oldSize, pageLog.newSize);
 
     write_tx_flag = 0;
     log_seq_num += sizeof(PageLog);
@@ -8155,7 +8155,7 @@ int sqlite3BtreeInsert(
   memcpy(pgLog_mmap+log_seq_num+sizeof(pageLog)+pageLog.oldSize,(void *)newCell,szNew);
   log_seq_num += sizeof(pageLog)+pageLog.oldSize+pageLog.newSize;
 
-  fprintf(stdout,"INSERT - logSize: %d, lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",(int)sizeof(pageLog), pageLog.lsn, pageLog.pgno, pageLog.opType, pageLog.pageIndex, pageLog.oldSize, pageLog.newSize);
+  //fprintf(stdout,"INSERT - logSize: %d, lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",(int)sizeof(pageLog), pageLog.lsn, pageLog.pgno, pageLog.opType, pageLog.pageIndex, pageLog.oldSize, pageLog.newSize);
 
 
   assert( pPage->nOverflow==0 || rc==SQLITE_OK );

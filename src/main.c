@@ -3016,7 +3016,7 @@ static int openDatabase(
 //  memset(pgLog_mmap,0,1024*1024);
   PageLog *pLog=(PageLog *)pgLog_mmap;
 
-  fprintf(stdout,"openDB - lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",pLog->lsn, pLog->pgno, pLog->opType, pLog->pageIndex, pLog->oldSize, pLog->newSize);
+  //fprintf(stdout,"openDB - lsn: %lu, pgno: %u, opType: %d, offset(indexPointer): %d, oldSize: %d, newSize: %d\n\n",pLog->lsn, pLog->pgno, pLog->opType, pLog->pageIndex, pLog->oldSize, pLog->newSize);
 
   //FIXME - JAEHUN - Get MemPage with pgno by btreeGetPage()
   MemPage **ppmemPage;
